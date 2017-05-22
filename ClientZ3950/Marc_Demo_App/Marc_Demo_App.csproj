@@ -72,5 +72,11 @@
       <Link>zlib1.dll</Link>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SobekCMMarcLibrary\SobekCMMarcLibrary.csproj">
+      <Project>{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}</Project>
+      <Name>SobekCMMarcLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

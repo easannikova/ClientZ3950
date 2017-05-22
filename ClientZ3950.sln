@@ -3,12 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marc_Demo_App", "Marc_Demo_App\Marc_Demo_App.csproj", "{CB1478BF-0859-476A-A5E0-EE579C9134E5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zoom.Net", "Zoom.Net\Zoom.Net.csproj", "{9337BDA3-2B49-42EA-95AC-4ADE30DBD1A8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zoom.Net.YazSharp", "Zoom.Net.YazSharp\Zoom.Net.YazSharp.csproj", "{0629E2F3-B371-4691-AE5E-DE42BA3821C4}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Yaz64", "Yaz64", "{DAE74D01-256B-42B8-B64E-207764D6F5A6}"
 	ProjectSection(SolutionItems) = preProject
 		Yaz64\libxml2.dll = Yaz64\libxml2.dll
@@ -20,7 +14,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Yaz64", "Yaz64", "{DAE74D01
 		Yaz64\zlib1.dll = Yaz64\zlib1.dll
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SobekCMMarcLibrary", "SobekCMMarcLibrary\SobekCMMarcLibrary.csproj", "{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marc_Demo_App", "ClientZ3950\Marc_Demo_App\Marc_Demo_App.csproj", "{CB1478BF-0859-476A-A5E0-EE579C9134E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SobekCMMarcLibrary", "ClientZ3950\SobekCMMarcLibrary\SobekCMMarcLibrary.csproj", "{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zoom.Net", "ClientZ3950\Zoom.Net\Zoom.Net.csproj", "{9337BDA3-2B49-42EA-95AC-4ADE30DBD1A8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zoom.Net.YazSharp", "ClientZ3950\Zoom.Net.YazSharp\Zoom.Net.YazSharp.csproj", "{0629E2F3-B371-4691-AE5E-DE42BA3821C4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,6 +38,14 @@ Global
 		{CB1478BF-0859-476A-A5E0-EE579C9134E5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CB1478BF-0859-476A-A5E0-EE579C9134E5}.Release|x64.ActiveCfg = Release|Any CPU
 		{CB1478BF-0859-476A-A5E0-EE579C9134E5}.Release|x64.Build.0 = Release|Any CPU
+		{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}.Debug|x64.ActiveCfg = Debug|x64
+		{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}.Debug|x64.Build.0 = Debug|x64
+		{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}.Release|x64.ActiveCfg = Release|x64
+		{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}.Release|x64.Build.0 = Release|x64
 		{9337BDA3-2B49-42EA-95AC-4ADE30DBD1A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9337BDA3-2B49-42EA-95AC-4ADE30DBD1A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9337BDA3-2B49-42EA-95AC-4ADE30DBD1A8}.Debug|x64.ActiveCfg = Debug|x64
@@ -54,14 +62,6 @@ Global
 		{0629E2F3-B371-4691-AE5E-DE42BA3821C4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0629E2F3-B371-4691-AE5E-DE42BA3821C4}.Release|x64.ActiveCfg = Release|x64
 		{0629E2F3-B371-4691-AE5E-DE42BA3821C4}.Release|x64.Build.0 = Release|x64
-		{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}.Debug|x64.ActiveCfg = Debug|x64
-		{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}.Debug|x64.Build.0 = Debug|x64
-		{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}.Release|x64.ActiveCfg = Release|x64
-		{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

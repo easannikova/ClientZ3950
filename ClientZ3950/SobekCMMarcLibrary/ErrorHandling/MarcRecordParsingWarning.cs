@@ -28,53 +28,53 @@ using System;
 
 #endregion
 
-namespace SobekCM.Bib_Package.MARC.ErrorHandling
+namespace SobekCMMarcLibrary.ErrorHandling
 {
     /// <summary> Enumeration for the basic warning types which need to be attached
     /// to a MARC record during parsing (mostly from a MARC21 exchange file)  </summary>
-    public enum MARC_Record_Parsing_Warning_Type_Enum : byte
+    public enum MarcRecordParsingWarningTypeEnum : byte
     {
         /// <summary> Unknown type of warning (most likely not used, 
         /// as this would likely be an error instead ) </summary>
-        UNKNOWN = 0,
+        Unknown = 0,
 
         /// <summary> A directory and field length mismatch was discovered, but it 
         /// appears that it was able to be handled </summary>
-        Directory_Field_Mismatch_Handled,
+        DirectoryFieldMismatchHandled,
 
         /// <summary> Indicates that an alternate character set appears to have been present
         /// in a MARC8 character-encoded record </summary>
-        Alternate_Character_Set_Present
+        AlternateCharacterSetPresent
 
     }
 
     /// <summary> Class stores basic warning or error information which may 
     /// occur during processing </summary>
-    public class MARC_Record_Parsing_Warning : IEquatable<MARC_Record_Parsing_Warning>
+    public class MarcRecordParsingWarning : IEquatable<MarcRecordParsingWarning>
     {
         /// <summary> Any additional information about a warning </summary>
         /// <remarks> This is different then the generic text for the warning; this is 
         /// ADDITIONAL information which may be saved for warning analysis </remarks>
-        public readonly string Warning_Details;
+        public readonly string WarningDetails;
 
         /// <summary> Type of this warning </summary>
-        public readonly MARC_Record_Parsing_Warning_Type_Enum Warning_Type;
+        public readonly MarcRecordParsingWarningTypeEnum WarningType;
 
         /// <summary> Constructor for a new instance of the MARC_Record_Parsing_Warning class </summary>
-        /// <param name="Warning_Type"> Type of this warning </param>
-        /// <param name="Warning_Details"> Any additional information about a warning </param>
-        public MARC_Record_Parsing_Warning(MARC_Record_Parsing_Warning_Type_Enum Warning_Type, string Warning_Details)
+        /// <param name="warningType"> Type of this warning </param>
+        /// <param name="warningDetails"> Any additional information about a warning </param>
+        public MarcRecordParsingWarning(MarcRecordParsingWarningTypeEnum warningType, string warningDetails)
         {
-            this.Warning_Type = Warning_Type;
-            this.Warning_Details = Warning_Details;
+            this.WarningType = warningType;
+            this.WarningDetails = warningDetails;
         }
 
         /// <summary> Constructor for a new instance of the MARC_Record_Parsing_Warning class </summary>
-        /// <param name="Warning_Type"> Type of this warning </param>
-        public MARC_Record_Parsing_Warning(MARC_Record_Parsing_Warning_Type_Enum Warning_Type)
+        /// <param name="warningType"> Type of this warning </param>
+        public MarcRecordParsingWarning(MarcRecordParsingWarningTypeEnum warningType)
         {
-            this.Warning_Type = Warning_Type;
-            Warning_Details = String.Empty;
+            this.WarningType = warningType;
+            WarningDetails = String.Empty;
         }
 
         #region IEquatable<MARC_Record_Parsing_Warning> Members
@@ -83,9 +83,9 @@ namespace SobekCM.Bib_Package.MARC.ErrorHandling
         /// warning type </summary>
         /// <param name="other"> Other warning to check for type match </param>
         /// <returns> TRUE if the two warnings are the same type, otherwise FALSE </returns>
-        public bool Equals(MARC_Record_Parsing_Warning other)
+        public bool Equals(MarcRecordParsingWarning other)
         {
-            return Warning_Type == other.Warning_Type;
+            return other != null && WarningType == other.WarningType;
         }
 
         #endregion

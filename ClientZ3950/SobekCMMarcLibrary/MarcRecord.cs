@@ -29,8 +29,9 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 using System.Xml;
-using SobekCM.Bib_Package.MARC.ErrorHandling;
 using SobekCM.Bib_Package.MARC.Parsers;
+using SobekCMMarcLibrary;
+using SobekCMMarcLibrary.ErrorHandling;
 using SobekCM_Marc_Library;
 using SobekCM_Marc_Library.Parsers;
 using SobekCM_Marc_Library.Writers;
@@ -46,8 +47,8 @@ namespace SobekCM.Bib_Package.MARC
         private string _controlNumber;
         private readonly SortedList<int, List<MarcField>> _fields;
         private string _leader;
-        private List<MARC_Record_Parsing_Warning> _warnings;
-        private List<MARC_Record_Parsing_Error> _errors;
+        private List<MarcRecordParsingWarning> _warnings;
+        private List<MarcRecordParsingError> _errors;
 
         /// <summary> Constructor for a new instance of the MARC_XML_Record class </summary>
         public MarcRecord()
@@ -389,15 +390,15 @@ namespace SobekCM.Bib_Package.MARC
                         returnVal.Append(thisField.Tag.ToString().PadLeft(3, '0') + " " + thisField.Indicators);
 
                         // Build the complete line
-                        foreach (MARC_Subfield thisSubfield in thisField.Subfields)
+                        foreach (MarcSubfield thisSubfield in thisField.Subfields)
                         {
-                            if (thisSubfield.Subfield_Code == ' ')
+                            if (thisSubfield.SubfieldCode == ' ')
                             {
                                 returnVal.Append(" " + thisSubfield.Data);
                             }
                             else
                             {
-                                returnVal.Append(" |" + thisSubfield.Subfield_Code + " " + thisSubfield.Data);
+                                returnVal.Append(" |" + thisSubfield.SubfieldCode + " " + thisSubfield.Data);
                             }
                         }
 
@@ -416,11 +417,11 @@ namespace SobekCM.Bib_Package.MARC
 
         /// <summary> Add a new warning which occurred during parsing to this MARC record object </summary>
         /// <param name="Warning"> Warning object to add to the list </param>
-        public void Add_Warning(MARC_Record_Parsing_Warning Warning)
+        public void Add_Warning(MarcRecordParsingWarning Warning)
         {
             // Ensure the list is built
             if (_warnings == null)
-                _warnings = new List<MARC_Record_Parsing_Warning>();
+                _warnings = new List<MarcRecordParsingWarning>();
 
             // If no other warning of the same type exists, add this
             if (!_warnings.Contains(Warning))
@@ -430,14 +431,14 @@ namespace SobekCM.Bib_Package.MARC
         /// <summary> Add a new warning which occurred during parsing to this MARC record object </summary>
         /// <param name="Warning_Type"> Type of this warning </param>
         /// <param name="Warning_Details"> Any additional information about a warning </param>
-        public void Add_Warning(MARC_Record_Parsing_Warning_Type_Enum Warning_Type, string Warning_Details)
+        public void Add_Warning(MarcRecordParsingWarningTypeEnum Warning_Type, string Warning_Details)
         {
             // Ensure the list is built
             if (_warnings == null)
-                _warnings = new List<MARC_Record_Parsing_Warning>();
+                _warnings = new List<MarcRecordParsingWarning>();
 
             // Build this warning object
-            MARC_Record_Parsing_Warning Warning = new MARC_Record_Parsing_Warning(Warning_Type, Warning_Details);
+            MarcRecordParsingWarning Warning = new MarcRecordParsingWarning(Warning_Type, Warning_Details);
 
             // If no other warning of the same type exists, add this
             if (!_warnings.Contains(Warning))
@@ -446,14 +447,14 @@ namespace SobekCM.Bib_Package.MARC
 
         /// <summary> Add a new warning which occurred during parsing to this MARC record object </summary>
         /// <param name="Warning_Type"> Type of this warning </param>
-        public void Add_Warning(MARC_Record_Parsing_Warning_Type_Enum Warning_Type)
+        public void Add_Warning(MarcRecordParsingWarningTypeEnum Warning_Type)
         {
             // Ensure the list is built
             if (_warnings == null)
-                _warnings = new List<MARC_Record_Parsing_Warning>();
+                _warnings = new List<MarcRecordParsingWarning>();
 
             // Build this warning object
-            MARC_Record_Parsing_Warning Warning = new MARC_Record_Parsing_Warning(Warning_Type);
+            MarcRecordParsingWarning Warning = new MarcRecordParsingWarning(Warning_Type);
 
             // If no other warning of the same type exists, add this
             if (!_warnings.Contains(Warning))
@@ -467,9 +468,9 @@ namespace SobekCM.Bib_Package.MARC
         }
 
         /// <summary> Returns the list of warnings associated with this MARC record  </summary>
-        public ReadOnlyCollection<MARC_Record_Parsing_Warning> Warnings
+        public ReadOnlyCollection<MarcRecordParsingWarning> Warnings
         {
-            get { return _warnings == null ? null : new ReadOnlyCollection<MARC_Record_Parsing_Warning>(_warnings); }
+            get { return _warnings == null ? null : new ReadOnlyCollection<MarcRecordParsingWarning>(_warnings); }
         }
 
         #endregion
@@ -478,11 +479,11 @@ namespace SobekCM.Bib_Package.MARC
 
         /// <summary> Add a new error which occurred during parsing to this MARC record object </summary>
         /// <param name="Error"> Error object to add to the list </param>
-        public void Add_Error(MARC_Record_Parsing_Error Error)
+        public void Add_Error(MarcRecordParsingError Error)
         {
             // Ensure the list is built
             if (_errors == null)
-                _errors = new List<MARC_Record_Parsing_Error>();
+                _errors = new List<MarcRecordParsingError>();
 
             // If no other error of the same type exists, add this
             if (!_errors.Contains(Error))
@@ -492,14 +493,14 @@ namespace SobekCM.Bib_Package.MARC
         /// <summary> Add a new error which occurred during parsing to this MARC record object </summary>
         /// <param name="Error_Type"> Type of this error </param>
         /// <param name="Error_Details"> Any additional information about an error </param>
-        public void Add_Error(MARC_Record_Parsing_Error_Type_Enum Error_Type, string Error_Details)
+        public void Add_Error(MarcRecordParsingErrorTypeEnum Error_Type, string Error_Details)
         {
             // Ensure the list is built
             if (_errors == null)
-                _errors = new List<MARC_Record_Parsing_Error>();
+                _errors = new List<MarcRecordParsingError>();
 
             // Build this Error object
-            MARC_Record_Parsing_Error Error = new MARC_Record_Parsing_Error(Error_Type, Error_Details);
+            MarcRecordParsingError Error = new MarcRecordParsingError(Error_Type, Error_Details);
 
             // If no other Error of the same type exists, add this
             if (!_errors.Contains(Error))
@@ -508,14 +509,14 @@ namespace SobekCM.Bib_Package.MARC
 
         /// <summary> Add a new error which occurred during parsing to this MARC record object </summary>
         /// <param name="Error_Type"> Type of this error </param>
-        public void Add_Error(MARC_Record_Parsing_Error_Type_Enum Error_Type)
+        public void Add_Error(MarcRecordParsingErrorTypeEnum Error_Type)
         {
             // Ensure the list is built
             if (_errors == null)
-                _errors = new List<MARC_Record_Parsing_Error>();
+                _errors = new List<MarcRecordParsingError>();
 
             // Build this error object
-            MARC_Record_Parsing_Error Error = new MARC_Record_Parsing_Error(Error_Type);
+            MarcRecordParsingError Error = new MarcRecordParsingError(Error_Type);
 
             // If no other error of the same type exists, add this
             if (!_errors.Contains(Error))
@@ -529,9 +530,9 @@ namespace SobekCM.Bib_Package.MARC
         }
 
         /// <summary> Returns the list of erors associated with this MARC record  </summary>
-        public ReadOnlyCollection<MARC_Record_Parsing_Error> Errors
+        public ReadOnlyCollection<MarcRecordParsingError> Errors
         {
-            get { return _errors == null ? null : new ReadOnlyCollection<MARC_Record_Parsing_Error>(_errors); }
+            get { return _errors == null ? null : new ReadOnlyCollection<MarcRecordParsingError>(_errors); }
         }
 
         #endregion

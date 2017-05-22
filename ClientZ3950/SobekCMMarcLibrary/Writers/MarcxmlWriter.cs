@@ -31,6 +31,7 @@ using System.IO;
 using System.Text;
 using System.Xml.Linq;
 using SobekCM.Bib_Package.MARC;
+using SobekCMMarcLibrary;
 
 #endregion
 
@@ -151,12 +152,12 @@ namespace SobekCM_Marc_Library.Writers
                     recordRoot.Add(dataField);
 
                     // Add each subfield
-                    foreach (MARC_Subfield thisSubfield in thisField.Subfields)
+                    foreach (MarcSubfield thisSubfield in thisField.Subfields)
                     {
                         // Create this subfield element and add it to the datafield
                         var subfield = new XElement("subfield",
                             thisSubfield.Data,
-                            new XAttribute("code", thisSubfield.Subfield_Code)
+                            new XAttribute("code", thisSubfield.SubfieldCode)
                         );
                         dataField.Add(subfield);
                     }

@@ -29,7 +29,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using SobekCM.Bib_Package.MARC.ErrorHandling;
+using SobekCMMarcLibrary.ErrorHandling;
 using SobekCM_Marc_Library;
 using SobekCM_Marc_Library.Parsers;
 
@@ -256,7 +256,7 @@ namespace SobekCM.Bib_Package.MARC.Parsers
                     if (!Int16.TryParse(((char) result).ToString(), out temp))
                     {
                         if (Action_On_Error == Action_On_Error_Encountered_Enum.StoreInRecord)
-                            thisRecord.Add_Error(MARC_Record_Parsing_Error_Type_Enum.Invalid_Directory_Encountered,
+                            thisRecord.Add_Error(MarcRecordParsingErrorTypeEnum.InvalidDirectoryEncountered,
                                 "Found invalid (non-numeric) character in a directory entry.");
                         else
                             throw new ApplicationException("Found invalid (non-numeric) character in a directory entry.");
@@ -382,7 +382,7 @@ namespace SobekCM.Bib_Package.MARC.Parsers
                         {
                             if (Action_On_Error == Action_On_Error_Encountered_Enum.StoreInRecord)
                                 thisRecord.Add_Error(
-                                    MARC_Record_Parsing_Error_Type_Enum.Directory_Field_Mismatch_Unhandled);
+                                    MarcRecordParsingErrorTypeEnum.DirectoryFieldMismatchUnhandled);
                             else
                                 throw new ApplicationException(
                                     "Field indexes and directory information cannot be resolved with one another.");
@@ -391,7 +391,7 @@ namespace SobekCM.Bib_Package.MARC.Parsers
                         {
                             // This worked, but add a warning none-the-less
                             thisRecord.Add_Warning(
-                                MARC_Record_Parsing_Warning_Type_Enum.Directory_Field_Mismatch_Handled);
+                                MarcRecordParsingWarningTypeEnum.DirectoryFieldMismatchHandled);
                         }
                     }
                     Marc21ParserVariableFieldData fieldData =
@@ -448,7 +448,7 @@ namespace SobekCM.Bib_Package.MARC.Parsers
             catch (EndOfStreamException)
             {
                 if (Action_On_Error == Action_On_Error_Encountered_Enum.StoreInRecord)
-                    thisRecord.Add_Error(MARC_Record_Parsing_Error_Type_Enum.Unexpected_End_Of_Stream_Encountered);
+                    thisRecord.Add_Error(MarcRecordParsingErrorTypeEnum.UnexpectedEndOfStreamEncountered);
                 else
                     throw new ApplicationException(
                         "Unexpected end of stream encountered!  Input stream may be invalid format or truncated.");
@@ -500,7 +500,7 @@ namespace SobekCM.Bib_Package.MARC.Parsers
             // Check to see if an alternate character set is present
             if (marcByte1 == ALTERNATE_CHARACTER_SET_INDICATOR)
             {
-                thisRecord.Add_Warning(MARC_Record_Parsing_Warning_Type_Enum.Alternate_Character_Set_Present);
+                thisRecord.Add_Warning(MarcRecordParsingWarningTypeEnum.AlternateCharacterSetPresent);
             }
 
             // For the special characters in MARC encoding, return FALSE, 

@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using SobekCM.Bib_Package.MARC;
+using SobekCMMarcLibrary;
 
 #endregion
 
@@ -128,9 +129,9 @@ namespace SobekCM_Marc_Library.Writers
                         completeLine.Append(int_to_string(thisEntry.Tag, 3) + RecordSeperator + thisEntry.Indicators);
 
                     // Build the complete line
-                    foreach (MARC_Subfield thisSubfield in thisEntry.Subfields)
+                    foreach (MarcSubfield thisSubfield in thisEntry.Subfields)
                     {
-                        if (thisSubfield.Subfield_Code == ' ')
+                        if (thisSubfield.SubfieldCode == ' ')
                         {
                             if (thisEntry.Indicators.Length == 0)
                                 completeLine.Append(thisSubfield.Data);
@@ -139,7 +140,7 @@ namespace SobekCM_Marc_Library.Writers
                         }
                         else
                         {
-                            completeLine.Append(UnitSeperator.ToString() + thisSubfield.Subfield_Code +
+                            completeLine.Append(UnitSeperator.ToString() + thisSubfield.SubfieldCode +
                                                 thisSubfield.Data);
                         }
                     }

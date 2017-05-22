@@ -30,6 +30,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using SobekCM.Bib_Package.MARC;
+using SobekCMMarcLibrary;
 
 #endregion
 
@@ -40,14 +41,14 @@ namespace SobekCM_Marc_Library
     public class MarcField
     {
         private string _data;
-        private readonly List<MARC_Subfield> _subfields;
+        private readonly List<MarcSubfield> _subfields;
 
         #region Constructors
 
         /// <summary> Constructor for a new instance of the MARC_Field class </summary>
         public MarcField()
         {
-            _subfields = new List<MARC_Subfield>();
+            _subfields = new List<MarcSubfield>();
 
             Tag = -1;
             Indicator1 = ' ';
@@ -59,7 +60,7 @@ namespace SobekCM_Marc_Library
         /// <param name="controlFieldValue">Value for this control field </param>
         public MarcField(int tag, string controlFieldValue)
         {
-            _subfields = new List<MARC_Subfield>();
+            _subfields = new List<MarcSubfield>();
 
             this.Tag = tag;
             _data = controlFieldValue;
@@ -73,7 +74,7 @@ namespace SobekCM_Marc_Library
         /// <param name="indicator2">Second indicator</param>
         public MarcField(int tag, char indicator1, char indicator2)
         {
-            _subfields = new List<MARC_Subfield>();
+            _subfields = new List<MarcSubfield>();
 
             this.Tag = tag;
             this.Indicator1 = indicator1;
@@ -86,7 +87,7 @@ namespace SobekCM_Marc_Library
         /// <param name="controlFieldValue">Value for this control field</param>
         public MarcField(int tag, string indicators, string controlFieldValue)
         {
-            _subfields = new List<MARC_Subfield>();
+            _subfields = new List<MarcSubfield>();
 
             this.Tag = tag;
             _data = controlFieldValue;
@@ -172,7 +173,7 @@ namespace SobekCM_Marc_Library
         public int SubfieldCount => _subfields.Count;
 
         /// <summary> Gets the collection of subfields in this data field </summary>
-        public ReadOnlyCollection<MARC_Subfield> Subfields => new ReadOnlyCollection<MARC_Subfield>(_subfields);
+        public ReadOnlyCollection<MarcSubfield> Subfields => new ReadOnlyCollection<MarcSubfield>(_subfields);
 
         /// <summary> Gets the data from a particular subfield in this data field </summary>
         /// <param name="subfieldCode"> Code for the subfield in question </param>
@@ -186,7 +187,7 @@ namespace SobekCM_Marc_Library
                 var returnValue = string.Empty;
                 foreach (var subfield in _subfields)
                 {
-                    if (subfield.Subfield_Code == subfieldCode)
+                    if (subfield.SubfieldCode == subfieldCode)
                     {
                         if (returnValue.Length == 0)
                             returnValue = subfield.Data;
@@ -203,7 +204,7 @@ namespace SobekCM_Marc_Library
         /// <returns>TRUE if the subfield exists, otherwise FALSE</returns>
         public bool has_Subfield(char subfieldCode)
         {
-            return _subfields.Any(subfield => subfield.Subfield_Code == subfieldCode);
+            return _subfields.Any(subfield => subfield.SubfieldCode == subfieldCode);
         }
 
         /// <summary> Adds a new subfield code to this MARC field </summary>
@@ -211,7 +212,7 @@ namespace SobekCM_Marc_Library
         /// <param name="data"> Data stored for this subfield </param>
         public void Add_Subfield(char subfieldCode, string data)
         {
-            _subfields.Add(new MARC_Subfield(subfieldCode, data));
+            _subfields.Add(new MarcSubfield(subfieldCode, data));
         }
 
         /// <summary> Adds a new subfield code to this MARC field or updates an existing subfield of the same code </summary>
@@ -223,7 +224,7 @@ namespace SobekCM_Marc_Library
             // Look through existing subfields
             foreach (var subfield in _subfields)
             {
-                if (subfield.Subfield_Code == subfieldCode)
+                if (subfield.SubfieldCode == subfieldCode)
                 {
                     subfield.Data = data;
                     return;
@@ -231,7 +232,7 @@ namespace SobekCM_Marc_Library
             }
 
             // Add this as a new subfield
-            _subfields.Add(new MARC_Subfield(subfieldCode, data));
+            _subfields.Add(new MarcSubfield(subfieldCode, data));
         }
 
         /// <summary> Clears the list of all subfields in this field </summary>
@@ -243,10 +244,10 @@ namespace SobekCM_Marc_Library
         /// <summary> Gets the colleciton of subfields by subfield code </summary>
         /// <param name="subfieldCode">Code for this subfield in the MARC record field </param>
         /// <returns> Collection of subfields by subfield code </returns>
-        public ReadOnlyCollection<MARC_Subfield> Subfields_By_Code(char subfieldCode)
+        public ReadOnlyCollection<MarcSubfield> Subfields_By_Code(char subfieldCode)
         {
-            var returnValue = _subfields.Where(subfield => subfield.Subfield_Code == subfieldCode).ToList();
-            return new ReadOnlyCollection<MARC_Subfield>(returnValue);
+            var returnValue = _subfields.Where(subfield => subfield.SubfieldCode == subfieldCode).ToList();
+            return new ReadOnlyCollection<MarcSubfield>(returnValue);
         }
 
         /// <summary> Returns this data field as a simple string value </summary>

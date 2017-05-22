@@ -65,9 +65,9 @@
   <ItemGroup>
     <Compile Include="MarcField.cs" />
     <Compile Include="MarcRecord.cs" />
-    <Compile Include="ErrorHandling\MARC_Record_Parsing_Error.cs" />
-    <Compile Include="ErrorHandling\MARC_Record_Parsing_Warning.cs" />
-    <Compile Include="MARC_Subfield.cs" />
+    <Compile Include="ErrorHandling\MarcRecordParsingError.cs" />
+    <Compile Include="ErrorHandling\MarcRecordParsingWarning.cs" />
+    <Compile Include="MarcSubfield.cs" />
     <Compile Include="Parsers\Marc21ExchangeFormatParser.cs" />
     <Compile Include="Parsers\Marc21ParserDirectoryEntry.cs" />
     <Compile Include="Parsers\Marc21ParserVariableFieldData.cs" />
