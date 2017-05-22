@@ -8,8 +8,8 @@
     <ProjectGuid>{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SobekCM_Marc_Library</RootNamespace>
-    <AssemblyName>SobekCM_Marc_Library</AssemblyName>
+    <RootNamespace>SobekCMMarcLibrary</RootNamespace>
+    <AssemblyName>SobekCMMarcLibrary</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
