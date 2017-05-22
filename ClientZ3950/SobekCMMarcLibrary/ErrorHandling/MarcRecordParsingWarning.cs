@@ -25,6 +25,7 @@
 #region Using directives
 
 using System;
+using static System.String;
 
 #endregion
 
@@ -65,16 +66,16 @@ namespace SobekCMMarcLibrary.ErrorHandling
         /// <param name="warningDetails"> Any additional information about a warning </param>
         public MarcRecordParsingWarning(MarcRecordParsingWarningTypeEnum warningType, string warningDetails)
         {
-            this.WarningType = warningType;
-            this.WarningDetails = warningDetails;
+            WarningType = warningType;
+            WarningDetails = warningDetails;
         }
 
         /// <summary> Constructor for a new instance of the MARC_Record_Parsing_Warning class </summary>
         /// <param name="warningType"> Type of this warning </param>
         public MarcRecordParsingWarning(MarcRecordParsingWarningTypeEnum warningType)
         {
-            this.WarningType = warningType;
-            WarningDetails = String.Empty;
+            WarningType = warningType;
+            WarningDetails = Empty;
         }
 
         #region IEquatable<MARC_Record_Parsing_Warning> Members

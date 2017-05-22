@@ -46,7 +46,7 @@ namespace Zoom.Net
                     + "use. This is usually because the Zoom.Net.Factory "
                     + "section is missing\n"
                     + "from the application configuration.\n\n";
-                throw new ConfigurationException(message);
+                throw new ConfigurationErrorsException(message);
             }
             IPrefixQuery queryObject 
                 = (IPrefixQuery) 
@@ -73,7 +73,7 @@ namespace Zoom.Net
                     + "use. This is usually because the Zoom.Net.Factory "
                     + "section is missing\n"
                     + "from the application configuration.\n\n";
-                throw new ConfigurationException(message);
+                throw new ConfigurationErrorsException(message);
             }
             ICQLQuery queryObject 
                 = (ICQLQuery) 
