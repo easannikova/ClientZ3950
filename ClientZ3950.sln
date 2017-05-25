@@ -16,11 +16,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Yaz64", "Yaz64", "{DAE74D01
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marc_Demo_App", "ClientZ3950\Marc_Demo_App\Marc_Demo_App.csproj", "{CB1478BF-0859-476A-A5E0-EE579C9134E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SobekCMMarcLibrary", "ClientZ3950\SobekCMMarcLibrary\SobekCMMarcLibrary.csproj", "{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USMarcLibrary", "ClientZ3950\SobekCMMarcLibrary\USMarcLibrary.csproj", "{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zoom.Net", "ClientZ3950\Zoom.Net\Zoom.Net.csproj", "{9337BDA3-2B49-42EA-95AC-4ADE30DBD1A8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zoom.Net.YazSharp", "ClientZ3950\Zoom.Net.YazSharp\Zoom.Net.YazSharp.csproj", "{0629E2F3-B371-4691-AE5E-DE42BA3821C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RequestApplication", "RequestApplication\RequestApplication.csproj", "{7E24EDAC-3CEB-43DF-B6B0-5F1F0EE8F3FF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,6 +64,14 @@ Global
 		{0629E2F3-B371-4691-AE5E-DE42BA3821C4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0629E2F3-B371-4691-AE5E-DE42BA3821C4}.Release|x64.ActiveCfg = Release|x64
 		{0629E2F3-B371-4691-AE5E-DE42BA3821C4}.Release|x64.Build.0 = Release|x64
+		{7E24EDAC-3CEB-43DF-B6B0-5F1F0EE8F3FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E24EDAC-3CEB-43DF-B6B0-5F1F0EE8F3FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E24EDAC-3CEB-43DF-B6B0-5F1F0EE8F3FF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7E24EDAC-3CEB-43DF-B6B0-5F1F0EE8F3FF}.Debug|x64.Build.0 = Debug|Any CPU
+		{7E24EDAC-3CEB-43DF-B6B0-5F1F0EE8F3FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E24EDAC-3CEB-43DF-B6B0-5F1F0EE8F3FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E24EDAC-3CEB-43DF-B6B0-5F1F0EE8F3FF}.Release|x64.ActiveCfg = Release|Any CPU
+		{7E24EDAC-3CEB-43DF-B6B0-5F1F0EE8F3FF}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,27 +1,3 @@
-#region License and Copyright
-
-//          SobekCM MARC Library ( Version 1.2 )
-//          
-//          Copyright (2005-2012) Mark Sullivan. ( Mark.V.Sullivan@gmail.com )
-//          
-//          This file is part of SobekCM MARC Library.
-//          
-//          SobekCM MARC Library is free software: you can redistribute it and/or modify
-//          it under the terms of the GNU Lesser Public License as published by
-//          the Free Software Foundation, either version 3 of the License, or
-//          (at your option) any later version.
-//            
-//          SobekCM MARC Library is distributed in the hope that it will be useful,
-//          but WITHOUT ANY WARRANTY; without even the implied warranty of
-//          MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//          GNU Lesser Public License for more details.
-//            
-//          You should have received a copy of the GNU Lesser Public License
-//          along with SobekCM MARC Library.  If not, see <http://www.gnu.org/licenses/>.
-
-
-#endregion
-
 #region Using directives
 
 using System;
@@ -29,7 +5,7 @@ using static System.String;
 
 #endregion
 
-namespace SobekCMMarcLibrary.ErrorHandling
+namespace USMarcLibrary.ErrorHandling
 {
     /// <summary> Enumeration for the basic error types which need to be attached
     /// to a MARC record during parsing (mostly from a MARC21 exchange file)  </summary>

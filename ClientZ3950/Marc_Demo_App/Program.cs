@@ -1,9 +1,8 @@
 ﻿using System;
-using SobekCM.Bib_Package.MARC;
-using SobekCM.Bib_Package.MARC.Parsers;
-using SobekCM_Marc_Library;
-using SobekCM_Marc_Library.Writers;
-using SobekCM_Marc_Library.Z3950;
+using USMarcLibrary;
+using USMarcLibrary.Parsers;
+using USMarcLibrary.Writers;
+using USMarcLibrary.Z3950;
 
 namespace Marc_Demo_App
 {
@@ -165,7 +164,12 @@ namespace Marc_Demo_App
                 }
 
                 // Write as MARCXML
-                recordFromZ3950.Save_MARC_XML("demo4.xml");
+                int i = 0;
+                foreach (var marcRecord in recordFromZ3950)
+                {
+                    marcRecord.Save_MARC_XML("record" + i++ + ".xml");
+                }
+                //recordFromZ3950.Save_MARC_XML("demo4.xml");
             }
             catch (Exception ee)
             {

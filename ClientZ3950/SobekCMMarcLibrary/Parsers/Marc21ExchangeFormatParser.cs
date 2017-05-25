@@ -1,27 +1,3 @@
-#region License and Copyright
-
-//          SobekCM MARC Library ( Version 1.2 )
-//          
-//          Copyright (2005-2012) Mark Sullivan. ( Mark.V.Sullivan@gmail.com )
-//          
-//          This file is part of SobekCM MARC Library.
-//          
-//          SobekCM MARC Library is free software: you can redistribute it and/or modify
-//          it under the terms of the GNU Lesser Public License as published by
-//          the Free Software Foundation, either version 3 of the License, or
-//          (at your option) any later version.
-//            
-//          SobekCM MARC Library is distributed in the hope that it will be useful,
-//          but WITHOUT ANY WARRANTY; without even the implied warranty of
-//          MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//          GNU Lesser Public License for more details.
-//            
-//          You should have received a copy of the GNU Lesser Public License
-//          along with SobekCM MARC Library.  If not, see <http://www.gnu.org/licenses/>.
-
-
-#endregion
-
 #region Using directives
 
 using System;
@@ -29,13 +5,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using SobekCMMarcLibrary.ErrorHandling;
-using SobekCM_Marc_Library;
-using SobekCM_Marc_Library.Parsers;
+using USMarcLibrary.ErrorHandling;
 
 #endregion
 
-namespace SobekCM.Bib_Package.MARC.Parsers
+namespace USMarcLibrary.Parsers
 {
     /// <summary> Enumeration indicates the type of CHARACTER encoding within the MARC record </summary>
     public enum RecordCharacterEncoding : byte
@@ -47,12 +21,12 @@ namespace SobekCM.Bib_Package.MARC.Parsers
         Unicode,
 
         /// <summary> Unrecognized character encoding value found  (treated as Unicode) </summary>
-        UNRECOGNIZED
+        Unrecognized
     }
 
     /// <summary> Enumeration indicates what action should be taken when errors are encountered during
     /// parsing a file </summary>
-    public enum Action_On_Error_Encountered_Enum : byte
+    public enum ActionOnErrorEncounteredEnum : byte
     {
         /// <summary> Throws an exception and stops processing a file immediately on the first error </summary>
         ThrowException = 1,
@@ -66,21 +40,21 @@ namespace SobekCM.Bib_Package.MARC.Parsers
     /// You can either pass in the stream or file to read into the constructor and immediately begin using Next() to step
     /// through them, or you can use the empty constructor and call the Parse methods for the first record. <br /><br />
     /// To  use the IEnumerable interface, you must pass in the Stream or filename in the constructor.</remarks>
-    public class Marc21ExchangeFormatParser : IDisposable, IEnumerable<MarcRecord>, IEnumerator<MarcRecord>
+    public class Marc21ExchangeFormatParser : IEnumerable<MarcRecord>, IEnumerator<MarcRecord>
     {
         // Stream used to read the Marc21 records
-        private BinaryReader reader;
+        private BinaryReader _reader;
 
         // Constants used when parsing the Marc21 stream
-        private const char END_OF_RECORD = (char) 29;
-        private const char RECORD_SEPERATOR = (char) 30;
-        private const char UNIT_SEPERATOR = (char) 31;
-        private const int ALTERNATE_CHARACTER_SET_INDICATOR = 27;
+        private const char EndOfRecord = (char) 29;
+        private const char RecordSeperator = (char) 30;
+        private const char UnitSeperator = (char) 31;
+        private const int AlternateCharacterSetIndicator = 27;
 
         /// <summary> Variable indicates what action should be taken when an error is encountered
         /// while parsing a MARC21 file </summary>
-        public static Action_On_Error_Encountered_Enum Action_On_Error =
-            Action_On_Error_Encountered_Enum.StoreInRecord;
+        public static ActionOnErrorEncounteredEnum ActionOnError =
+            ActionOnErrorEncounteredEnum.StoreInRecord;
 
         #region Constructors 
 
@@ -95,7 +69,7 @@ namespace SobekCM.Bib_Package.MARC.Parsers
         public Marc21ExchangeFormatParser(Stream marc21Stream)
         {
             // Create the new reader object
-            reader = new BinaryReader(marc21Stream);
+            _reader = new BinaryReader(marc21Stream);
         }
 
         /// <summary> Constructor for a new instance of this class </summary>
@@ -103,7 +77,7 @@ namespace SobekCM.Bib_Package.MARC.Parsers
         public Marc21ExchangeFormatParser(string marc21File)
         {
             // Create the new reader object
-            reader = new BinaryReader(File.Open(marc21File, FileMode.Open));
+            _reader = new BinaryReader(File.Open(marc21File, FileMode.Open));
         }
 
         #endregion
@@ -114,7 +88,7 @@ namespace SobekCM.Bib_Package.MARC.Parsers
         public MarcRecord Parse(Stream marc21Stream)
         {
             // Create the new reader object
-            reader = new BinaryReader(marc21Stream);
+            _reader = new BinaryReader(marc21Stream);
 
             // Return the first record
             return parse_next_record();
@@ -126,7 +100,7 @@ namespace SobekCM.Bib_Package.MARC.Parsers
         public MarcRecord Parse(string marc21File)
         {
             // Create the new reader object
-            reader = new BinaryReader(File.Open(marc21File, FileMode.Open));
+            _reader = new BinaryReader(File.Open(marc21File, FileMode.Open));
 
             // Return the first record
             return parse_next_record();
@@ -137,7 +111,7 @@ namespace SobekCM.Bib_Package.MARC.Parsers
         /// <returns> Next object, or NULL </returns>
         public MarcRecord Next()
         {
-            if (reader != null)
+            if (_reader != null)
                 return parse_next_record();
             return null;
         }
@@ -147,10 +121,10 @@ namespace SobekCM.Bib_Package.MARC.Parsers
         {
             try
             {
-                if (reader != null)
+                if (_reader != null)
                 {
-                    reader.Close();
-                    reader = null;
+                    _reader.Close();
+                    _reader = null;
                 }
             }
             catch
@@ -174,19 +148,19 @@ namespace SobekCM.Bib_Package.MARC.Parsers
             try
             {
                 // Some values to check the end of the file
-                long fileLength = reader.BaseStream.Length;
+                long fileLength = _reader.BaseStream.Length;
 
                 // Create the StringBuilder object for this record
                 var leaderBuilder = new StringBuilder(30);
 
                 // Read to first character
-                int result = reader.Read();
+                int result = _reader.Read();
                 bool eof = false;
 
                 // Read the leader and directory directly into a string, since this will not have specially
                 // coded characters ( leader and directory end with a RECORD_SEPERATOR )
                 int count = 0;
-                while ((!eof) && (result != END_OF_RECORD) && (result != RECORD_SEPERATOR) && (count < 24))
+                while ((!eof) && (result != EndOfRecord) && (result != RecordSeperator) && (count < 24))
                 {
                     // Want to skip any special characters at the beginning (like encoding characters)
                     if (result < 127)
@@ -197,9 +171,9 @@ namespace SobekCM.Bib_Package.MARC.Parsers
                     }
 
                     // Read the next character and increment the count
-                    if (reader.BaseStream.Position < fileLength)
+                    if (_reader.BaseStream.Position < fileLength)
                     {
-                        result = reader.ReadByte();
+                        result = _reader.ReadByte();
                     }
                     else
                     {
@@ -231,7 +205,7 @@ namespace SobekCM.Bib_Package.MARC.Parsers
                 thisRecord.Leader = leaderBuilder.ToString();
 
                 // Verify the type of character encoding used here
-                RecordCharacterEncoding encoding = RecordCharacterEncoding.UNRECOGNIZED;
+                RecordCharacterEncoding encoding = RecordCharacterEncoding.Unrecognized;
                 switch (thisRecord.Leader[9])
                 {
                     case ' ':
@@ -249,13 +223,13 @@ namespace SobekCM.Bib_Package.MARC.Parsers
                 int tag = 0;
                 int fieldLength = 0;
                 int startingPosition = 0;
-                while ((result != END_OF_RECORD) && (result != RECORD_SEPERATOR))
+                while ((result != EndOfRecord) && (result != RecordSeperator))
                 {
                     // Set the temp value to zero here
                     short temp = 0;
-                    if (!Int16.TryParse(((char) result).ToString(), out temp))
+                    if (!short.TryParse(((char) result).ToString(), out temp))
                     {
-                        if (Action_On_Error == Action_On_Error_Encountered_Enum.StoreInRecord)
+                        if (ActionOnError == ActionOnErrorEncounteredEnum.StoreInRecord)
                             thisRecord.Add_Error(MarcRecordParsingErrorTypeEnum.InvalidDirectoryEncountered,
                                 "Found invalid (non-numeric) character in a directory entry.");
                         else
@@ -289,7 +263,7 @@ namespace SobekCM.Bib_Package.MARC.Parsers
                     }
 
                     // Read the next character
-                    result = reader.Read();
+                    result = _reader.Read();
                     count++;
 
                     // If this directory entry has been completely read, save it
@@ -313,11 +287,11 @@ namespace SobekCM.Bib_Package.MARC.Parsers
                 count = 0;
                 var startIndex = 0;
                 short lastFieldStartIndex = 0;
-                result = reader.Read();
-                while (result != END_OF_RECORD)
+                result = _reader.Read();
+                while (result != EndOfRecord)
                 {
                     // Was this the end of the field (or tag)?
-                    if (result == RECORD_SEPERATOR)
+                    if (result == RecordSeperator)
                     {
                         // Get the value for this field
                         byte[] fieldAsByteArray = byteFieldBuilder.ToArray();
@@ -327,7 +301,7 @@ namespace SobekCM.Bib_Package.MARC.Parsers
                         switch (encoding)
                         {
                             case RecordCharacterEncoding.Marc:
-                                fieldAsString = ConvertMarcBytesToUnicodeString(thisRecord, fieldAsByteArray);
+                                fieldAsString = ConvertMarcBytesToUnicodeString(fieldAsByteArray);
                                 break;
 
                             default:
@@ -355,7 +329,7 @@ namespace SobekCM.Bib_Package.MARC.Parsers
                     }
 
                     // Read the next character
-                    result = reader.ReadByte();
+                    result = _reader.ReadByte();
                     count++;
                 }
 
@@ -380,7 +354,7 @@ namespace SobekCM.Bib_Package.MARC.Parsers
                             !fieldDatas.ContainsKey(
                                 (short) (directoryEntry.StartingPosition + directoryErrorCorrection)))
                         {
-                            if (Action_On_Error == Action_On_Error_Encountered_Enum.StoreInRecord)
+                            if (ActionOnError == ActionOnErrorEncounteredEnum.StoreInRecord)
                                 thisRecord.Add_Error(
                                     MarcRecordParsingErrorTypeEnum.DirectoryFieldMismatchUnhandled);
                             else
@@ -400,7 +374,7 @@ namespace SobekCM.Bib_Package.MARC.Parsers
 
                     // See if this row has an indicator
                     string indicator = "";
-                    if ((variable_field_data.Length > 3) && (variable_field_data[2] == (UNIT_SEPERATOR)))
+                    if ((variable_field_data.Length > 3) && (variable_field_data[2] == (UnitSeperator)))
                     {
                         indicator = variable_field_data.Substring(0, 2);
                         variable_field_data = variable_field_data.Substring(2);
@@ -409,10 +383,10 @@ namespace SobekCM.Bib_Package.MARC.Parsers
                         variable_field_data = variable_field_data.Substring(0);
 
                     // Is this split into seperate subfields?
-                    if ((variable_field_data.Length > 1) && (variable_field_data[0] == (UNIT_SEPERATOR)))
+                    if ((variable_field_data.Length > 1) && (variable_field_data[0] == (UnitSeperator)))
                     {
                         // Split this into subfields
-                        string[] subfields = variable_field_data.Substring(1).Split(new[] {UNIT_SEPERATOR});
+                        string[] subfields = variable_field_data.Substring(1).Split(new[] {UnitSeperator});
 
                         // Create the new field
                         MarcField newField = new MarcField
@@ -447,7 +421,7 @@ namespace SobekCM.Bib_Package.MARC.Parsers
             }
             catch (EndOfStreamException)
             {
-                if (Action_On_Error == Action_On_Error_Encountered_Enum.StoreInRecord)
+                if (ActionOnError == ActionOnErrorEncounteredEnum.StoreInRecord)
                     thisRecord.Add_Error(MarcRecordParsingErrorTypeEnum.UnexpectedEndOfStreamEncountered);
                 else
                     throw new ApplicationException(
@@ -461,1701 +435,25 @@ namespace SobekCM.Bib_Package.MARC.Parsers
 
         #region Methods used for converting MARC character encoded fields to Unicode 
 
-        private static string ConvertMarcBytesToUnicodeString(MarcRecord thisRecord, byte[] input)
+        private static string ConvertMarcBytesToUnicodeString(IReadOnlyCollection<byte> input)
         {
-            int marcByte1 = -1;
-            int marcByte2 = -1;
-
             // Create the string builder to build the array
-            StringBuilder builder = new StringBuilder(input.Length);
+            var builder = new StringBuilder(input.Count);
 
             // Step through all the bytes in the array
-            foreach (byte t in input)
+            foreach (var t in input)
             {
                 // If any previous bytes, save them
-                var marcByte3 = marcByte2;
-                marcByte2 = marcByte1;
 
                 // Get this byte frmo the array
-                marcByte1 = (int) t;
+                var marcByte1 = (int) t;
 
                 builder.Append((char)marcByte1);
-
-                // Try to convert the current byte to unicode character
-                //if (Append_Unicode_Character(thisRecord, builder, marcByte1, marcByte2, marcByte3))
-                //{
-                //    // Since the bytes were handled, clear them
-                //    marcByte1 = -1;
-                //    marcByte2 = -1;
-                //}
             }
 
             // Return the string
             return builder.ToString();
         }
-
-        private static bool Append_Unicode_Character(MarcRecord thisRecord, StringBuilder stringBuilder, int marcByte1,
-            int marcByte2, int marcByte3)
-        {
-            // Check to see if an alternate character set is present
-            if (marcByte1 == ALTERNATE_CHARACTER_SET_INDICATOR)
-            {
-                thisRecord.Add_Warning(MarcRecordParsingWarningTypeEnum.AlternateCharacterSetPresent);
-            }
-
-            // For the special characters in MARC encoding, return FALSE, 
-            // indicating the byte was not yet handled. (Need the next byte(s))
-            if (marcByte1 >= 224)
-                return false;
-
-            // Case where there is only one byte to handle (and not a special case returned already from above lines)
-            if ((marcByte2 == -1) && (marcByte3 == -1))
-            {
-                stringBuilder.Append((char) marcByte1);
-                return true;
-            }
-
-            // Is this just a two byte combination?
-            if (marcByte3 == -1)
-            {
-                if (marcByte2 != -1)
-                {
-                    if (marcByte2 == 224)
-                    {
-                        switch (marcByte1)
-                        {
-                            case 65:
-                                stringBuilder.Append((char) 0x1EA2);
-                                return true;
-                            case 69:
-                                stringBuilder.Append((char) 0x1EBA);
-                                return true;
-                            case 73:
-                                stringBuilder.Append((char) 0x1EC8);
-                                return true;
-                            case 79:
-                                stringBuilder.Append((char) 0x1ECE);
-                                return true;
-                            case 85:
-                                stringBuilder.Append((char) 0x1EE6);
-                                return true;
-                            case 89:
-                                stringBuilder.Append((char) 0x1EF6);
-                                return true;
-                            case 97:
-                                stringBuilder.Append((char) 0x1EA3);
-                                return true;
-                            case 101:
-                                stringBuilder.Append((char) 0x1EBB);
-                                return true;
-                            case 105:
-                                stringBuilder.Append((char) 0x1EC9);
-                                return true;
-                            case 111:
-                                stringBuilder.Append((char) 0x1ECF);
-                                return true;
-                            case 117:
-                                stringBuilder.Append((char) 0x1EE7);
-                                return true;
-                            case 121:
-                                stringBuilder.Append((char) 0x1EF7);
-                                return true;
-                            case 172:
-                                stringBuilder.Append((char) 0x1EDE);
-                                return true;
-                            case 173:
-                                stringBuilder.Append((char) 0x1EEC);
-                                return true;
-                            case 188:
-                                stringBuilder.Append((char) 0x1EDF);
-                                return true;
-                            case 189:
-                                stringBuilder.Append((char) 0x1EED);
-                                return true;
-                        }
-                    }
-                    if (marcByte2 == 225)
-                    {
-                        switch (marcByte1)
-                        {
-                            case 65:
-                                stringBuilder.Append((char) 0x00C0);
-                                return true;
-                            case 69:
-                                stringBuilder.Append((char) 0x00C8);
-                                return true;
-                            case 73:
-                                stringBuilder.Append((char) 0x00CC);
-                                return true;
-                            case 78:
-                                stringBuilder.Append((char) 0x01F8);
-                                return true;
-                            case 79:
-                                stringBuilder.Append((char) 0x00D2);
-                                return true;
-                            case 85:
-                                stringBuilder.Append((char) 0x00D9);
-                                return true;
-                            case 87:
-                                stringBuilder.Append((char) 0x1E80);
-                                return true;
-                            case 89:
-                                stringBuilder.Append((char) 0x1EF2);
-                                return true;
-                            case 97:
-                                stringBuilder.Append((char) 0x00E0);
-                                return true;
-                            case 101:
-                                stringBuilder.Append((char) 0x00E8);
-                                return true;
-                            case 105:
-                                stringBuilder.Append((char) 0x00EC);
-                                return true;
-                            case 110:
-                                stringBuilder.Append((char) 0x01F9);
-                                return true;
-                            case 111:
-                                stringBuilder.Append((char) 0x00F2);
-                                return true;
-                            case 117:
-                                stringBuilder.Append((char) 0x00F9);
-                                return true;
-                            case 119:
-                                stringBuilder.Append((char) 0x1E81);
-                                return true;
-                            case 121:
-                                stringBuilder.Append((char) 0x1EF3);
-                                return true;
-                            case 172:
-                                stringBuilder.Append((char) 0x1EDC);
-                                return true;
-                            case 173:
-                                stringBuilder.Append((char) 0x1EEA);
-                                return true;
-                            case 188:
-                                stringBuilder.Append((char) 0x1EDD);
-                                return true;
-                            case 189:
-                                stringBuilder.Append((char) 0x1EEB);
-                                return true;
-                        }
-                    }
-                    if (marcByte2 == 226)
-                    {
-                        switch (marcByte1)
-                        {
-                            case 65:
-                                stringBuilder.Append((char) 0x00C1);
-                                return true;
-                            case 67:
-                                stringBuilder.Append((char) 0x0106);
-                                return true;
-                            case 69:
-                                stringBuilder.Append((char) 0x00C9);
-                                return true;
-                            case 71:
-                                stringBuilder.Append((char) 0x01F4);
-                                return true;
-                            case 73:
-                                stringBuilder.Append((char) 0x00CD);
-                                return true;
-                            case 75:
-                                stringBuilder.Append((char) 0x1E30);
-                                return true;
-                            case 76:
-                                stringBuilder.Append((char) 0x0139);
-                                return true;
-                            case 77:
-                                stringBuilder.Append((char) 0x1E3E);
-                                return true;
-                            case 78:
-                                stringBuilder.Append((char) 0x0143);
-                                return true;
-                            case 79:
-                                stringBuilder.Append((char) 0x00D3);
-                                return true;
-                            case 80:
-                                stringBuilder.Append((char) 0x1E54);
-                                return true;
-                            case 82:
-                                stringBuilder.Append((char) 0x0154);
-                                return true;
-                            case 83:
-                                stringBuilder.Append((char) 0x015A);
-                                return true;
-                            case 85:
-                                stringBuilder.Append((char) 0x00DA);
-                                return true;
-                            case 87:
-                                stringBuilder.Append((char) 0x1E82);
-                                return true;
-                            case 89:
-                                stringBuilder.Append((char) 0x00DD);
-                                return true;
-                            case 90:
-                                stringBuilder.Append((char) 0x0179);
-                                return true;
-                            case 97:
-                                stringBuilder.Append((char) 0x00E1);
-                                return true;
-                            case 99:
-                                stringBuilder.Append((char) 0x0107);
-                                return true;
-                            case 101:
-                                stringBuilder.Append((char) 0x00E9);
-                                return true;
-                            case 103:
-                                stringBuilder.Append((char) 0x01F5);
-                                return true;
-                            case 105:
-                                stringBuilder.Append((char) 0x00ED);
-                                return true;
-                            case 107:
-                                stringBuilder.Append((char) 0x1E31);
-                                return true;
-                            case 108:
-                                stringBuilder.Append((char) 0x013A);
-                                return true;
-                            case 109:
-                                stringBuilder.Append((char) 0x1E3F);
-                                return true;
-                            case 110:
-                                stringBuilder.Append((char) 0x0144);
-                                return true;
-                            case 111:
-                                stringBuilder.Append((char) 0x00F3);
-                                return true;
-                            case 112:
-                                stringBuilder.Append((char) 0x1E55);
-                                return true;
-                            case 114:
-                                stringBuilder.Append((char) 0x0155);
-                                return true;
-                            case 115:
-                                stringBuilder.Append((char) 0x015B);
-                                return true;
-                            case 117:
-                                stringBuilder.Append((char) 0x00FA);
-                                return true;
-                            case 119:
-                                stringBuilder.Append((char) 0x1E83);
-                                return true;
-                            case 121:
-                                stringBuilder.Append((char) 0x00FD);
-                                return true;
-                            case 122:
-                                stringBuilder.Append((char) 0x017A);
-                                return true;
-                            case 162:
-                                stringBuilder.Append((char) 0x01FE);
-                                return true;
-                            case 165:
-                                stringBuilder.Append((char) 0x01FC);
-                                return true;
-                            case 172:
-                                stringBuilder.Append((char) 0x1EDA);
-                                return true;
-                            case 173:
-                                stringBuilder.Append((char) 0x1EE8);
-                                return true;
-                            case 178:
-                                stringBuilder.Append((char) 0x01FF);
-                                return true;
-                            case 181:
-                                stringBuilder.Append((char) 0x01FD);
-                                return true;
-                            case 188:
-                                stringBuilder.Append((char) 0x1EDB);
-                                return true;
-                            case 189:
-                                stringBuilder.Append((char) 0x1EE9);
-                                return true;
-                            case 232:
-                                stringBuilder.Append((char) 0x0344);
-                                return true;
-                        }
-                    }
-                    if (marcByte2 == 227)
-                    {
-                        switch (marcByte1)
-                        {
-                            case 65:
-                                stringBuilder.Append((char) 0x00C2);
-                                return true;
-                            case 67:
-                                stringBuilder.Append((char) 0x0108);
-                                return true;
-                            case 69:
-                                stringBuilder.Append((char) 0x00CA);
-                                return true;
-                            case 71:
-                                stringBuilder.Append((char) 0x011C);
-                                return true;
-                            case 72:
-                                stringBuilder.Append((char) 0x0124);
-                                return true;
-                            case 73:
-                                stringBuilder.Append((char) 0x00CE);
-                                return true;
-                            case 74:
-                                stringBuilder.Append((char) 0x0134);
-                                return true;
-                            case 79:
-                                stringBuilder.Append((char) 0x00D4);
-                                return true;
-                            case 83:
-                                stringBuilder.Append((char) 0x015C);
-                                return true;
-                            case 85:
-                                stringBuilder.Append((char) 0x00DB);
-                                return true;
-                            case 87:
-                                stringBuilder.Append((char) 0x0174);
-                                return true;
-                            case 89:
-                                stringBuilder.Append((char) 0x0176);
-                                return true;
-                            case 90:
-                                stringBuilder.Append((char) 0x1E90);
-                                return true;
-                            case 97:
-                                stringBuilder.Append((char) 0x00E2);
-                                return true;
-                            case 99:
-                                stringBuilder.Append((char) 0x0109);
-                                return true;
-                            case 101:
-                                stringBuilder.Append((char) 0x00EA);
-                                return true;
-                            case 103:
-                                stringBuilder.Append((char) 0x011D);
-                                return true;
-                            case 104:
-                                stringBuilder.Append((char) 0x0125);
-                                return true;
-                            case 105:
-                                stringBuilder.Append((char) 0x00EE);
-                                return true;
-                            case 106:
-                                stringBuilder.Append((char) 0x0135);
-                                return true;
-                            case 111:
-                                stringBuilder.Append((char) 0x00F4);
-                                return true;
-                            case 115:
-                                stringBuilder.Append((char) 0x015D);
-                                return true;
-                            case 117:
-                                stringBuilder.Append((char) 0x00FB);
-                                return true;
-                            case 119:
-                                stringBuilder.Append((char) 0x0175);
-                                return true;
-                            case 121:
-                                stringBuilder.Append((char) 0x0177);
-                                return true;
-                            case 122:
-                                stringBuilder.Append((char) 0x1E91);
-                                return true;
-                        }
-                    }
-                    if (marcByte2 == 228)
-                    {
-                        switch (marcByte1)
-                        {
-                            case 65:
-                                stringBuilder.Append((char) 0x00C3);
-                                return true;
-                            case 69:
-                                stringBuilder.Append((char) 0x1EBC);
-                                return true;
-                            case 73:
-                                stringBuilder.Append((char) 0x0128);
-                                return true;
-                            case 78:
-                                stringBuilder.Append((char) 0x00D1);
-                                return true;
-                            case 79:
-                                stringBuilder.Append((char) 0x00D5);
-                                return true;
-                            case 85:
-                                stringBuilder.Append((char) 0x0168);
-                                return true;
-                            case 86:
-                                stringBuilder.Append((char) 0x1E7C);
-                                return true;
-                            case 89:
-                                stringBuilder.Append((char) 0x1EF8);
-                                return true;
-                            case 97:
-                                stringBuilder.Append((char) 0x00E3);
-                                return true;
-                            case 101:
-                                stringBuilder.Append((char) 0x1EBD);
-                                return true;
-                            case 105:
-                                stringBuilder.Append((char) 0x0129);
-                                return true;
-                            case 110:
-                                stringBuilder.Append((char) 0x00F1);
-                                return true;
-                            case 111:
-                                stringBuilder.Append((char) 0x00F5);
-                                return true;
-                            case 117:
-                                stringBuilder.Append((char) 0x0169);
-                                return true;
-                            case 118:
-                                stringBuilder.Append((char) 0x1E7D);
-                                return true;
-                            case 121:
-                                stringBuilder.Append((char) 0x1EF9);
-                                return true;
-                            case 172:
-                                stringBuilder.Append((char) 0x1EE0);
-                                return true;
-                            case 173:
-                                stringBuilder.Append((char) 0x1EEE);
-                                return true;
-                            case 188:
-                                stringBuilder.Append((char) 0x1EE1);
-                                return true;
-                            case 189:
-                                stringBuilder.Append((char) 0x1EEF);
-                                return true;
-                        }
-                    }
-                    if (marcByte2 == 229)
-                    {
-                        switch (marcByte1)
-                        {
-                            case 65:
-                                stringBuilder.Append((char) 0x0100);
-                                return true;
-                            case 69:
-                                stringBuilder.Append((char) 0x0112);
-                                return true;
-                            case 71:
-                                stringBuilder.Append((char) 0x1E20);
-                                return true;
-                            case 73:
-                                stringBuilder.Append((char) 0x012A);
-                                return true;
-                            case 79:
-                                stringBuilder.Append((char) 0x014C);
-                                return true;
-                            case 85:
-                                stringBuilder.Append((char) 0x016A);
-                                return true;
-                            case 89:
-                                stringBuilder.Append((char) 0x0232);
-                                return true;
-                            case 97:
-                                stringBuilder.Append((char) 0x0101);
-                                return true;
-                            case 101:
-                                stringBuilder.Append((char) 0x0113);
-                                return true;
-                            case 103:
-                                stringBuilder.Append((char) 0x1E21);
-                                return true;
-                            case 105:
-                                stringBuilder.Append((char) 0x012B);
-                                return true;
-                            case 111:
-                                stringBuilder.Append((char) 0x014D);
-                                return true;
-                            case 117:
-                                stringBuilder.Append((char) 0x016B);
-                                return true;
-                            case 121:
-                                stringBuilder.Append((char) 0x0233);
-                                return true;
-                            case 165:
-                                stringBuilder.Append((char) 0x01E2);
-                                return true;
-                            case 181:
-                                stringBuilder.Append((char) 0x01E3);
-                                return true;
-                        }
-                    }
-                    if (marcByte2 == 230)
-                    {
-                        switch (marcByte1)
-                        {
-                            case 65:
-                                stringBuilder.Append((char) 0x0102);
-                                return true;
-                            case 69:
-                                stringBuilder.Append((char) 0x0114);
-                                return true;
-                            case 71:
-                                stringBuilder.Append((char) 0x011E);
-                                return true;
-                            case 73:
-                                stringBuilder.Append((char) 0x012C);
-                                return true;
-                            case 79:
-                                stringBuilder.Append((char) 0x014E);
-                                return true;
-                            case 85:
-                                stringBuilder.Append((char) 0x016C);
-                                return true;
-                            case 97:
-                                stringBuilder.Append((char) 0x0103);
-                                return true;
-                            case 101:
-                                stringBuilder.Append((char) 0x0115);
-                                return true;
-                            case 103:
-                                stringBuilder.Append((char) 0x011F);
-                                return true;
-                            case 105:
-                                stringBuilder.Append((char) 0x012D);
-                                return true;
-                            case 111:
-                                stringBuilder.Append((char) 0x014F);
-                                return true;
-                            case 117:
-                                stringBuilder.Append((char) 0x016D);
-                                return true;
-                        }
-                    }
-                    if (marcByte2 == 231)
-                    {
-                        switch (marcByte1)
-                        {
-                            case 65:
-                                stringBuilder.Append((char) 0x0226);
-                                return true;
-                            case 66:
-                                stringBuilder.Append((char) 0x1E02);
-                                return true;
-                            case 67:
-                                stringBuilder.Append((char) 0x010A);
-                                return true;
-                            case 68:
-                                stringBuilder.Append((char) 0x1E0A);
-                                return true;
-                            case 69:
-                                stringBuilder.Append((char) 0x0116);
-                                return true;
-                            case 70:
-                                stringBuilder.Append((char) 0x1E1E);
-                                return true;
-                            case 71:
-                                stringBuilder.Append((char) 0x0120);
-                                return true;
-                            case 72:
-                                stringBuilder.Append((char) 0x1E22);
-                                return true;
-                            case 73:
-                                stringBuilder.Append((char) 0x0130);
-                                return true;
-                            case 77:
-                                stringBuilder.Append((char) 0x1E40);
-                                return true;
-                            case 78:
-                                stringBuilder.Append((char) 0x1E44);
-                                return true;
-                            case 79:
-                                stringBuilder.Append((char) 0x022E);
-                                return true;
-                            case 80:
-                                stringBuilder.Append((char) 0x1E56);
-                                return true;
-                            case 82:
-                                stringBuilder.Append((char) 0x1E58);
-                                return true;
-                            case 83:
-                                stringBuilder.Append((char) 0x1E60);
-                                return true;
-                            case 84:
-                                stringBuilder.Append((char) 0x1E6A);
-                                return true;
-                            case 87:
-                                stringBuilder.Append((char) 0x1E86);
-                                return true;
-                            case 88:
-                                stringBuilder.Append((char) 0x1E8A);
-                                return true;
-                            case 89:
-                                stringBuilder.Append((char) 0x1E8E);
-                                return true;
-                            case 90:
-                                stringBuilder.Append((char) 0x017B);
-                                return true;
-                            case 97:
-                                stringBuilder.Append((char) 0x0227);
-                                return true;
-                            case 98:
-                                stringBuilder.Append((char) 0x1E03);
-                                return true;
-                            case 99:
-                                stringBuilder.Append((char) 0x010B);
-                                return true;
-                            case 100:
-                                stringBuilder.Append((char) 0x1E0B);
-                                return true;
-                            case 101:
-                                stringBuilder.Append((char) 0x0117);
-                                return true;
-                            case 102:
-                                stringBuilder.Append((char) 0x1E1F);
-                                return true;
-                            case 103:
-                                stringBuilder.Append((char) 0x0121);
-                                return true;
-                            case 104:
-                                stringBuilder.Append((char) 0x1E23);
-                                return true;
-                            case 109:
-                                stringBuilder.Append((char) 0x1E41);
-                                return true;
-                            case 110:
-                                stringBuilder.Append((char) 0x1E45);
-                                return true;
-                            case 111:
-                                stringBuilder.Append((char) 0x022F);
-                                return true;
-                            case 112:
-                                stringBuilder.Append((char) 0x1E57);
-                                return true;
-                            case 114:
-                                stringBuilder.Append((char) 0x1E59);
-                                return true;
-                            case 115:
-                                stringBuilder.Append((char) 0x1E61);
-                                return true;
-                            case 116:
-                                stringBuilder.Append((char) 0x1E6B);
-                                return true;
-                            case 119:
-                                stringBuilder.Append((char) 0x1E87);
-                                return true;
-                            case 120:
-                                stringBuilder.Append((char) 0x1E8B);
-                                return true;
-                            case 121:
-                                stringBuilder.Append((char) 0x1E8F);
-                                return true;
-                            case 122:
-                                stringBuilder.Append((char) 0x017C);
-                                return true;
-                        }
-                    }
-                    if (marcByte2 == 232)
-                    {
-                        switch (marcByte1)
-                        {
-                            case 65:
-                                stringBuilder.Append((char) 0x00C4);
-                                return true;
-                            case 69:
-                                stringBuilder.Append((char) 0x00CB);
-                                return true;
-                            case 72:
-                                stringBuilder.Append((char) 0x1E26);
-                                return true;
-                            case 73:
-                                stringBuilder.Append((char) 0x00CF);
-                                return true;
-                            case 79:
-                                stringBuilder.Append((char) 0x00D6);
-                                return true;
-                            case 85:
-                                stringBuilder.Append((char) 0x00DC);
-                                return true;
-                            case 87:
-                                stringBuilder.Append((char) 0x1E84);
-                                return true;
-                            case 88:
-                                stringBuilder.Append((char) 0x1E8C);
-                                return true;
-                            case 89:
-                                stringBuilder.Append((char) 0x0178);
-                                return true;
-                            case 97:
-                                stringBuilder.Append((char) 0x00E4);
-                                return true;
-                            case 101:
-                                stringBuilder.Append((char) 0x00EB);
-                                return true;
-                            case 104:
-                                stringBuilder.Append((char) 0x1E27);
-                                return true;
-                            case 105:
-                                stringBuilder.Append((char) 0x00EF);
-                                return true;
-                            case 111:
-                                stringBuilder.Append((char) 0x00F6);
-                                return true;
-                            case 116:
-                                stringBuilder.Append((char) 0x1E97);
-                                return true;
-                            case 117:
-                                stringBuilder.Append((char) 0x00FC);
-                                return true;
-                            case 119:
-                                stringBuilder.Append((char) 0x1E85);
-                                return true;
-                            case 120:
-                                stringBuilder.Append((char) 0x1E8D);
-                                return true;
-                            case 121:
-                                stringBuilder.Append((char) 0x00FF);
-                                return true;
-                        }
-                    }
-                    if (marcByte2 == 233)
-                    {
-                        switch (marcByte1)
-                        {
-                            case 65:
-                                stringBuilder.Append((char) 0x01CD);
-                                return true;
-                            case 67:
-                                stringBuilder.Append((char) 0x010C);
-                                return true;
-                            case 68:
-                                stringBuilder.Append((char) 0x010E);
-                                return true;
-                            case 69:
-                                stringBuilder.Append((char) 0x011A);
-                                return true;
-                            case 71:
-                                stringBuilder.Append((char) 0x01E6);
-                                return true;
-                            case 72:
-                                stringBuilder.Append((char) 0x021E);
-                                return true;
-                            case 73:
-                                stringBuilder.Append((char) 0x01CF);
-                                return true;
-                            case 75:
-                                stringBuilder.Append((char) 0x01E8);
-                                return true;
-                            case 76:
-                                stringBuilder.Append((char) 0x013D);
-                                return true;
-                            case 78:
-                                stringBuilder.Append((char) 0x0147);
-                                return true;
-                            case 79:
-                                stringBuilder.Append((char) 0x01D1);
-                                return true;
-                            case 82:
-                                stringBuilder.Append((char) 0x0158);
-                                return true;
-                            case 83:
-                                stringBuilder.Append((char) 0x0160);
-                                return true;
-                            case 84:
-                                stringBuilder.Append((char) 0x0164);
-                                return true;
-                            case 85:
-                                stringBuilder.Append((char) 0x01D3);
-                                return true;
-                            case 90:
-                                stringBuilder.Append((char) 0x017D);
-                                return true;
-                            case 97:
-                                stringBuilder.Append((char) 0x01CE);
-                                return true;
-                            case 99:
-                                stringBuilder.Append((char) 0x010D);
-                                return true;
-                            case 100:
-                                stringBuilder.Append((char) 0x010F);
-                                return true;
-                            case 101:
-                                stringBuilder.Append((char) 0x011B);
-                                return true;
-                            case 103:
-                                stringBuilder.Append((char) 0x01E7);
-                                return true;
-                            case 104:
-                                stringBuilder.Append((char) 0x021F);
-                                return true;
-                            case 105:
-                                stringBuilder.Append((char) 0x01D0);
-                                return true;
-                            case 106:
-                                stringBuilder.Append((char) 0x01F0);
-                                return true;
-                            case 107:
-                                stringBuilder.Append((char) 0x01E9);
-                                return true;
-                            case 108:
-                                stringBuilder.Append((char) 0x013E);
-                                return true;
-                            case 110:
-                                stringBuilder.Append((char) 0x0148);
-                                return true;
-                            case 111:
-                                stringBuilder.Append((char) 0x01D2);
-                                return true;
-                            case 114:
-                                stringBuilder.Append((char) 0x0159);
-                                return true;
-                            case 115:
-                                stringBuilder.Append((char) 0x0161);
-                                return true;
-                            case 116:
-                                stringBuilder.Append((char) 0x0165);
-                                return true;
-                            case 117:
-                                stringBuilder.Append((char) 0x01D4);
-                                return true;
-                            case 122:
-                                stringBuilder.Append((char) 0x017E);
-                                return true;
-                        }
-                    }
-                    if (marcByte2 == 234)
-                    {
-                        switch (marcByte1)
-                        {
-                            case 65:
-                                stringBuilder.Append((char) 0x00C5);
-                                return true;
-                            case 85:
-                                stringBuilder.Append((char) 0x016E);
-                                return true;
-                            case 97:
-                                stringBuilder.Append((char) 0x00E5);
-                                return true;
-                            case 117:
-                                stringBuilder.Append((char) 0x016F);
-                                return true;
-                            case 119:
-                                stringBuilder.Append((char) 0x1E98);
-                                return true;
-                            case 121:
-                                stringBuilder.Append((char) 0x1E99);
-                                return true;
-                        }
-                    }
-                    if (marcByte2 == 238)
-                    {
-                        switch (marcByte1)
-                        {
-                            case 79:
-                                stringBuilder.Append((char) 0x0150);
-                                return true;
-                            case 85:
-                                stringBuilder.Append((char) 0x0170);
-                                return true;
-                            case 111:
-                                stringBuilder.Append((char) 0x0151);
-                                return true;
-                            case 117:
-                                stringBuilder.Append((char) 0x0171);
-                                return true;
-                        }
-                    }
-                    if (marcByte2 == 240)
-                    {
-                        switch (marcByte1)
-                        {
-                            case 67:
-                                stringBuilder.Append((char) 0x00C7);
-                                return true;
-                            case 68:
-                                stringBuilder.Append((char) 0x1E10);
-                                return true;
-                            case 69:
-                                stringBuilder.Append((char) 0x0228);
-                                return true;
-                            case 71:
-                                stringBuilder.Append((char) 0x0122);
-                                return true;
-                            case 72:
-                                stringBuilder.Append((char) 0x1E28);
-                                return true;
-                            case 75:
-                                stringBuilder.Append((char) 0x0136);
-                                return true;
-                            case 76:
-                                stringBuilder.Append((char) 0x013B);
-                                return true;
-                            case 78:
-                                stringBuilder.Append((char) 0x0145);
-                                return true;
-                            case 82:
-                                stringBuilder.Append((char) 0x0156);
-                                return true;
-                            case 83:
-                                stringBuilder.Append((char) 0x015E);
-                                return true;
-                            case 84:
-                                stringBuilder.Append((char) 0x0162);
-                                return true;
-                            case 99:
-                                stringBuilder.Append((char) 0x00E7);
-                                return true;
-                            case 100:
-                                stringBuilder.Append((char) 0x1E11);
-                                return true;
-                            case 101:
-                                stringBuilder.Append((char) 0x0229);
-                                return true;
-                            case 103:
-                                stringBuilder.Append((char) 0x0123);
-                                return true;
-                            case 104:
-                                stringBuilder.Append((char) 0x1E29);
-                                return true;
-                            case 107:
-                                stringBuilder.Append((char) 0x0137);
-                                return true;
-                            case 108:
-                                stringBuilder.Append((char) 0x013C);
-                                return true;
-                            case 110:
-                                stringBuilder.Append((char) 0x0146);
-                                return true;
-                            case 114:
-                                stringBuilder.Append((char) 0x0157);
-                                return true;
-                            case 115:
-                                stringBuilder.Append((char) 0x015F);
-                                return true;
-                            case 116:
-                                stringBuilder.Append((char) 0x0163);
-                                return true;
-                        }
-                    }
-                    if (marcByte2 == 241)
-                    {
-                        switch (marcByte1)
-                        {
-                            case 65:
-                                stringBuilder.Append((char) 0x0104);
-                                return true;
-                            case 69:
-                                stringBuilder.Append((char) 0x0118);
-                                return true;
-                            case 73:
-                                stringBuilder.Append((char) 0x012E);
-                                return true;
-                            case 79:
-                                stringBuilder.Append((char) 0x01EA);
-                                return true;
-                            case 85:
-                                stringBuilder.Append((char) 0x0172);
-                                return true;
-                            case 97:
-                                stringBuilder.Append((char) 0x0105);
-                                return true;
-                            case 101:
-                                stringBuilder.Append((char) 0x0119);
-                                return true;
-                            case 105:
-                                stringBuilder.Append((char) 0x012F);
-                                return true;
-                            case 111:
-                                stringBuilder.Append((char) 0x01EB);
-                                return true;
-                            case 117:
-                                stringBuilder.Append((char) 0x0173);
-                                return true;
-                        }
-                    }
-                    if (marcByte2 == 242)
-                    {
-                        switch (marcByte1)
-                        {
-                            case 65:
-                                stringBuilder.Append((char) 0x1EA0);
-                                return true;
-                            case 66:
-                                stringBuilder.Append((char) 0x1E04);
-                                return true;
-                            case 68:
-                                stringBuilder.Append((char) 0x1E0C);
-                                return true;
-                            case 69:
-                                stringBuilder.Append((char) 0x1EB8);
-                                return true;
-                            case 72:
-                                stringBuilder.Append((char) 0x1E24);
-                                return true;
-                            case 73:
-                                stringBuilder.Append((char) 0x1ECA);
-                                return true;
-                            case 75:
-                                stringBuilder.Append((char) 0x1E32);
-                                return true;
-                            case 76:
-                                stringBuilder.Append((char) 0x1E36);
-                                return true;
-                            case 77:
-                                stringBuilder.Append((char) 0x1E42);
-                                return true;
-                            case 78:
-                                stringBuilder.Append((char) 0x1E46);
-                                return true;
-                            case 79:
-                                stringBuilder.Append((char) 0x1ECC);
-                                return true;
-                            case 82:
-                                stringBuilder.Append((char) 0x1E5A);
-                                return true;
-                            case 83:
-                                stringBuilder.Append((char) 0x1E62);
-                                return true;
-                            case 84:
-                                stringBuilder.Append((char) 0x1E6C);
-                                return true;
-                            case 85:
-                                stringBuilder.Append((char) 0x1EE4);
-                                return true;
-                            case 86:
-                                stringBuilder.Append((char) 0x1E7E);
-                                return true;
-                            case 87:
-                                stringBuilder.Append((char) 0x1E88);
-                                return true;
-                            case 89:
-                                stringBuilder.Append((char) 0x1EF4);
-                                return true;
-                            case 90:
-                                stringBuilder.Append((char) 0x1E92);
-                                return true;
-                            case 97:
-                                stringBuilder.Append((char) 0x1EA1);
-                                return true;
-                            case 98:
-                                stringBuilder.Append((char) 0x1E05);
-                                return true;
-                            case 100:
-                                stringBuilder.Append((char) 0x1E0D);
-                                return true;
-                            case 101:
-                                stringBuilder.Append((char) 0x1EB9);
-                                return true;
-                            case 104:
-                                stringBuilder.Append((char) 0x1E25);
-                                return true;
-                            case 105:
-                                stringBuilder.Append((char) 0x1ECB);
-                                return true;
-                            case 107:
-                                stringBuilder.Append((char) 0x1E33);
-                                return true;
-                            case 108:
-                                stringBuilder.Append((char) 0x1E37);
-                                return true;
-                            case 109:
-                                stringBuilder.Append((char) 0x1E43);
-                                return true;
-                            case 110:
-                                stringBuilder.Append((char) 0x1E47);
-                                return true;
-                            case 111:
-                                stringBuilder.Append((char) 0x1ECD);
-                                return true;
-                            case 114:
-                                stringBuilder.Append((char) 0x1E5B);
-                                return true;
-                            case 115:
-                                stringBuilder.Append((char) 0x1E63);
-                                return true;
-                            case 116:
-                                stringBuilder.Append((char) 0x1E6D);
-                                return true;
-                            case 117:
-                                stringBuilder.Append((char) 0x1EE5);
-                                return true;
-                            case 118:
-                                stringBuilder.Append((char) 0x1E7F);
-                                return true;
-                            case 119:
-                                stringBuilder.Append((char) 0x1E89);
-                                return true;
-                            case 121:
-                                stringBuilder.Append((char) 0x1EF5);
-                                return true;
-                            case 122:
-                                stringBuilder.Append((char) 0x1E93);
-                                return true;
-                            case 172:
-                                stringBuilder.Append((char) 0x1EE2);
-                                return true;
-                            case 173:
-                                stringBuilder.Append((char) 0x1EF0);
-                                return true;
-                            case 188:
-                                stringBuilder.Append((char) 0x1EE3);
-                                return true;
-                            case 189:
-                                stringBuilder.Append((char) 0x1EF1);
-                                return true;
-                        }
-                    }
-                    if (marcByte2 == 243)
-                    {
-                        switch (marcByte1)
-                        {
-                            case 85:
-                                stringBuilder.Append((char) 0x1E72);
-                                return true;
-                            case 117:
-                                stringBuilder.Append((char) 0x1E73);
-                                return true;
-                        }
-                    }
-                    if (marcByte2 == 244)
-                    {
-                        switch (marcByte1)
-                        {
-                            case 65:
-                                stringBuilder.Append((char) 0x1E00);
-                                return true;
-                            case 97:
-                                stringBuilder.Append((char) 0x1E01);
-                                return true;
-                        }
-                    }
-                    if (marcByte2 == 247)
-                    {
-                        switch (marcByte1)
-                        {
-                            case 83:
-                                stringBuilder.Append((char) 0x0218);
-                                return true;
-                            case 84:
-                                stringBuilder.Append((char) 0x021A);
-                                return true;
-                            case 115:
-                                stringBuilder.Append((char) 0x0219);
-                                return true;
-                            case 116:
-                                stringBuilder.Append((char) 0x021B);
-                                return true;
-                        }
-                    }
-                    if (marcByte2 == 249)
-                    {
-                        switch (marcByte1)
-                        {
-                            case 72:
-                                stringBuilder.Append((char) 0x1E2A);
-                                return true;
-                            case 104:
-                                stringBuilder.Append((char) 0x1E2B);
-                                return true;
-                        }
-                    }
-                }
-
-                return false;
-            }
-            else // This is a THREE byte combination
-            {
-                if (marcByte3 == 224)
-                {
-                    switch (marcByte2)
-                    {
-                        case 227:
-                            switch (marcByte1)
-                            {
-                                case 65:
-                                    stringBuilder.Append((char) 0x1EA8);
-                                    return true;
-                                case 69:
-                                    stringBuilder.Append((char) 0x1EC2);
-                                    return true;
-                                case 79:
-                                    stringBuilder.Append((char) 0x1ED4);
-                                    return true;
-                                case 97:
-                                    stringBuilder.Append((char) 0x1EA9);
-                                    return true;
-                                case 101:
-                                    stringBuilder.Append((char) 0x1EC3);
-                                    return true;
-                                case 111:
-                                    stringBuilder.Append((char) 0x1ED5);
-                                    return true;
-                            }
-                            break;
-                        case 230:
-                            switch (marcByte1)
-                            {
-                                case 65:
-                                    stringBuilder.Append((char) 0x1EB2);
-                                    return true;
-                                case 97:
-                                    stringBuilder.Append((char) 0x1EB3);
-                                    return true;
-                            }
-                            break;
-                    }
-                }
-
-                if (marcByte3 == 225)
-                {
-                    switch (marcByte2)
-                    {
-
-                        case 227:
-                            switch (marcByte1)
-                            {
-                                case 65:
-                                    stringBuilder.Append((char) 0x1EA6);
-                                    return true;
-                                case 69:
-                                    stringBuilder.Append((char) 0x1EC0);
-                                    return true;
-                                case 79:
-                                    stringBuilder.Append((char) 0x1ED2);
-                                    return true;
-                                case 97:
-                                    stringBuilder.Append((char) 0x1EA7);
-                                    return true;
-                                case 101:
-                                    stringBuilder.Append((char) 0x1EC1);
-                                    return true;
-                                case 111:
-                                    stringBuilder.Append((char) 0x1ED3);
-                                    return true;
-                            }
-                            break;
-                        case 229:
-                            switch (marcByte1)
-                            {
-                                case 69:
-                                    stringBuilder.Append((char) 0x1E14);
-                                    return true;
-                                case 79:
-                                    stringBuilder.Append((char) 0x1E50);
-                                    return true;
-                                case 101:
-                                    stringBuilder.Append((char) 0x1E15);
-                                    return true;
-                                case 111:
-                                    stringBuilder.Append((char) 0x1E51);
-                                    return true;
-                            }
-                            break;
-                        case 230:
-                            switch (marcByte1)
-                            {
-                                case 65:
-                                    stringBuilder.Append((char) 0x1EB0);
-                                    return true;
-                                case 97:
-                                    stringBuilder.Append((char) 0x1EB1);
-                                    return true;
-                            }
-                            break;
-                        case 232:
-                            switch (marcByte1)
-                            {
-                                case 85:
-                                    stringBuilder.Append((char) 0x01DB);
-                                    return true;
-                                case 117:
-                                    stringBuilder.Append((char) 0x01DC);
-                                    return true;
-                            }
-                            break;
-                    }
-                }
-                if (marcByte3 == 226)
-                {
-                    switch (marcByte2)
-                    {
-                        case 227:
-                            switch (marcByte1)
-                            {
-                                case 65:
-                                    stringBuilder.Append((char) 0x1EA4);
-                                    return true;
-                                case 69:
-                                    stringBuilder.Append((char) 0x1EBE);
-                                    return true;
-                                case 79:
-                                    stringBuilder.Append((char) 0x1ED0);
-                                    return true;
-                                case 97:
-                                    stringBuilder.Append((char) 0x1EA5);
-                                    return true;
-                                case 101:
-                                    stringBuilder.Append((char) 0x1EBF);
-                                    return true;
-                                case 111:
-                                    stringBuilder.Append((char) 0x1ED1);
-                                    return true;
-                            }
-                            break;
-                        case 228:
-                            switch (marcByte1)
-                            {
-                                case 79:
-                                    stringBuilder.Append((char) 0x1E4C);
-                                    return true;
-                                case 85:
-                                    stringBuilder.Append((char) 0x1E78);
-                                    return true;
-                                case 111:
-                                    stringBuilder.Append((char) 0x1E4D);
-                                    return true;
-                                case 117:
-                                    stringBuilder.Append((char) 0x1E79);
-                                    return true;
-                            }
-                            break;
-                        case 229:
-                            switch (marcByte1)
-                            {
-                                case 69:
-                                    stringBuilder.Append((char) 0x1E16);
-                                    return true;
-                                case 79:
-                                    stringBuilder.Append((char) 0x1E52);
-                                    return true;
-                                case 101:
-                                    stringBuilder.Append((char) 0x1E17);
-                                    return true;
-                                case 111:
-                                    stringBuilder.Append((char) 0x1E53);
-                                    return true;
-                            }
-                            break;
-                        case 230:
-                            switch (marcByte1)
-                            {
-                                case 65:
-                                    stringBuilder.Append((char) 0x1EAE);
-                                    return true;
-                                case 97:
-                                    stringBuilder.Append((char) 0x1EAF);
-                                    return true;
-                            }
-                            break;
-                        case 232:
-                            switch (marcByte1)
-                            {
-                                case 73:
-                                    stringBuilder.Append((char) 0x1E2E);
-                                    return true;
-                                case 85:
-                                    stringBuilder.Append((char) 0x01D7);
-                                    return true;
-                                case 105:
-                                    stringBuilder.Append((char) 0x1E2F);
-                                    return true;
-                                case 117:
-                                    stringBuilder.Append((char) 0x01D8);
-                                    return true;
-                            }
-                            break;
-                        case 234:
-                            switch (marcByte1)
-                            {
-                                case 65:
-                                    stringBuilder.Append((char) 0x01FA);
-                                    return true;
-                                case 97:
-                                    stringBuilder.Append((char) 0x01FB);
-                                    return true;
-                            }
-                            break;
-                        case 240:
-                            switch (marcByte1)
-                            {
-                                case 67:
-                                    stringBuilder.Append((char) 0x1E08);
-                                    return true;
-                                case 99:
-                                    stringBuilder.Append((char) 0x1E09);
-                                    return true;
-                            }
-                            break;
-                    }
-                }
-                if (marcByte3 == 227)
-                {
-                    switch (marcByte2)
-                    {
-                        case 242:
-                            switch (marcByte1)
-                            {
-                                case 65:
-                                    stringBuilder.Append((char) 0x1EAC);
-                                    return true;
-                                case 69:
-                                    stringBuilder.Append((char) 0x1EC6);
-                                    return true;
-                                case 79:
-                                    stringBuilder.Append((char) 0x1ED8);
-                                    return true;
-                                case 97:
-                                    stringBuilder.Append((char) 0x1EAD);
-                                    return true;
-                                case 101:
-                                    stringBuilder.Append((char) 0x1EC7);
-                                    return true;
-                                case 111:
-                                    stringBuilder.Append((char) 0x1ED9);
-                                    return true;
-                            }
-                            break;
-                    }
-                }
-                if (marcByte3 == 228)
-                {
-                    switch (marcByte2)
-                    {
-                        case 227:
-                            switch (marcByte1)
-                            {
-                                case 65:
-                                    stringBuilder.Append((char) 0x1EAA);
-                                    return true;
-                                case 69:
-                                    stringBuilder.Append((char) 0x1EC4);
-                                    return true;
-                                case 79:
-                                    stringBuilder.Append((char) 0x1ED6);
-                                    return true;
-                                case 97:
-                                    stringBuilder.Append((char) 0x1EAB);
-                                    return true;
-                                case 101:
-                                    stringBuilder.Append((char) 0x1EC5);
-                                    return true;
-                                case 111:
-                                    stringBuilder.Append((char) 0x1ED7);
-                                    return true;
-                            }
-                            break;
-                        case 230:
-                            switch (marcByte1)
-                            {
-                                case 65:
-                                    stringBuilder.Append((char) 0x1EB4);
-                                    return true;
-                                case 97:
-                                    stringBuilder.Append((char) 0x1EB5);
-                                    return true;
-                            }
-                            break;
-                    }
-                }
-                if (marcByte3 == 229)
-                {
-                    switch (marcByte2)
-                    {
-
-                        case 228:
-                            switch (marcByte1)
-                            {
-                                case 79:
-                                    stringBuilder.Append((char) 0x022C);
-                                    return true;
-                                case 111:
-                                    stringBuilder.Append((char) 0x022D);
-                                    return true;
-                            }
-                            break;
-                        case 231:
-                            switch (marcByte1)
-                            {
-                                case 65:
-                                    stringBuilder.Append((char) 0x01E0);
-                                    return true;
-                                case 79:
-                                    stringBuilder.Append((char) 0x0230);
-                                    return true;
-                                case 97:
-                                    stringBuilder.Append((char) 0x01E1);
-                                    return true;
-                                case 111:
-                                    stringBuilder.Append((char) 0x0231);
-                                    return true;
-                            }
-                            break;
-                        case 232:
-                            switch (marcByte1)
-                            {
-                                case 65:
-                                    stringBuilder.Append((char) 0x01DE);
-                                    return true;
-                                case 79:
-                                    stringBuilder.Append((char) 0x022A);
-                                    return true;
-                                case 85:
-                                    stringBuilder.Append((char) 0x01D5);
-                                    return true;
-                                case 97:
-                                    stringBuilder.Append((char) 0x01DF);
-                                    return true;
-                                case 111:
-                                    stringBuilder.Append((char) 0x022B);
-                                    return true;
-                                case 117:
-                                    stringBuilder.Append((char) 0x01D6);
-                                    return true;
-                            }
-                            break;
-                        case 241:
-                            switch (marcByte1)
-                            {
-                                case 79:
-                                    stringBuilder.Append((char) 0x01EC);
-                                    return true;
-                                case 111:
-                                    stringBuilder.Append((char) 0x01ED);
-                                    return true;
-                            }
-                            break;
-                        case 242:
-                            switch (marcByte1)
-                            {
-                                case 76:
-                                    stringBuilder.Append((char) 0x1E38);
-                                    return true;
-                                case 82:
-                                    stringBuilder.Append((char) 0x1E5C);
-                                    return true;
-                                case 108:
-                                    stringBuilder.Append((char) 0x1E39);
-                                    return true;
-                                case 114:
-                                    stringBuilder.Append((char) 0x1E5D);
-                                    return true;
-                            }
-                            break;
-                    }
-                }
-                if (marcByte3 == 230)
-                {
-                    switch (marcByte2)
-                    {
-
-                        case 240:
-                            switch (marcByte1)
-                            {
-                                case 69:
-                                    stringBuilder.Append((char) 0x1E1C);
-                                    return true;
-                                case 101:
-                                    stringBuilder.Append((char) 0x1E1D);
-                                    return true;
-                            }
-                            break;
-                        case 242:
-                            switch (marcByte1)
-                            {
-                                case 65:
-                                    stringBuilder.Append((char) 0x1EB6);
-                                    return true;
-                                case 97:
-                                    stringBuilder.Append((char) 0x1EB7);
-                                    return true;
-                            }
-                            break;
-                    }
-                }
-                if (marcByte3 == 231)
-                {
-                    switch (marcByte2)
-                    {
-
-                        case 226:
-                            switch (marcByte1)
-                            {
-                                case 83:
-                                    stringBuilder.Append((char) 0x1E64);
-                                    return true;
-                                case 115:
-                                    stringBuilder.Append((char) 0x1E65);
-                                    return true;
-                            }
-                            break;
-                        case 233:
-                            switch (marcByte1)
-                            {
-                                case 83:
-                                    stringBuilder.Append((char) 0x1E66);
-                                    return true;
-                                case 115:
-                                    stringBuilder.Append((char) 0x1E67);
-                                    return true;
-                            }
-                            break;
-                        case 242:
-                            switch (marcByte1)
-                            {
-                                case 83:
-                                    stringBuilder.Append((char) 0x1E68);
-                                    return true;
-                                case 115:
-                                    stringBuilder.Append((char) 0x1E69);
-                                    return true;
-                            }
-                            break;
-                    }
-                }
-                if (marcByte3 == 232)
-                {
-                    switch (marcByte2)
-                    {
-                        case 228:
-                            switch (marcByte1)
-                            {
-                                case 79:
-                                    stringBuilder.Append((char) 0x1E4E);
-                                    return true;
-                                case 111:
-                                    stringBuilder.Append((char) 0x1E4F);
-                                    return true;
-                            }
-                            break;
-                        case 229:
-                            switch (marcByte1)
-                            {
-                                case 85:
-                                    stringBuilder.Append((char) 0x1E7A);
-                                    return true;
-                                case 117:
-                                    stringBuilder.Append((char) 0x1E7B);
-                                    return true;
-                            }
-                            break;
-                    }
-                }
-                if (marcByte3 == 233)
-                {
-                    switch (marcByte2)
-                    {
-                        case 232:
-                            switch (marcByte1)
-                            {
-                                case 85:
-                                    stringBuilder.Append((char) 0x01D9);
-                                    return true;
-                                case 117:
-                                    stringBuilder.Append((char) 0x01DA);
-                                    return true;
-                            }
-                            break;
-                    }
-                }
-
-                // Since this is a three byte combination, just need to handle it SOMEHOW
-                // before the third byte is lost, or any introduced problem gets compounded.
-                // So, default this to just Unicode encoding.
-                stringBuilder.Append(
-                    Encoding.UTF8.GetString(new byte[] {(byte) marcByte3, (byte) marcByte2, (byte) marcByte1}));
-                return true;
-            }
-        }
-
 
         #endregion
 
@@ -2205,10 +503,7 @@ namespace SobekCM.Bib_Package.MARC.Parsers
 
         /// <summary> Returns the current record </summary>
         /// <remarks> Required to implement IEnumerable </remarks>
-        object IEnumerator.Current
-        {
-            get { return Current; }
-        }
+        object IEnumerator.Current => Current;
 
         /// <summary> Moves to the next record, and returns TRUE if one existed </summary>
         /// <returns> TRUE if another record was found, otherwise FALSE </returns>
@@ -2225,8 +520,8 @@ namespace SobekCM.Bib_Package.MARC.Parsers
         /// <remarks> Required to implement IEnumerable </remarks>
         public void Reset()
         {
-            if (reader.BaseStream.CanSeek)
-                reader.BaseStream.Seek(0, SeekOrigin.Begin);
+            if (_reader.BaseStream.CanSeek)
+                _reader.BaseStream.Seek(0, SeekOrigin.Begin);
         }
 
         #endregion

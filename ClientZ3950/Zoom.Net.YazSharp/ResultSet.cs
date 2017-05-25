@@ -35,19 +35,20 @@ namespace Zoom.Net.YazSharp
 {
 	public class ResultSet : IResultSet
 	{
-		internal ResultSet(IntPtr resultSet, Connection connection)
-		{
-			_connection = connection;
-			_resultSet = resultSet;
-			_size = Yaz.ZOOM_resultset_size(_resultSet);
-                        if (0 == _size){
-                            Console.Out.WriteLine("Yaz.ZOOM_resultset_size zero");
-                        }
-			_records = new Record[_size];
-			//Yaz.yaz_log(Yaz.LogLevel.LOG, "ResultSet Created");
-		}
+	    internal ResultSet(IntPtr resultSet, Connection connection)
+	    {
+	        _connection = connection;
+	        _resultSet = resultSet;
+	        _size = Yaz.ZOOM_resultset_size(_resultSet);
+	        if (0 == _size)
+	        {
+	            Console.Out.WriteLine("Yaz.ZOOM_resultset_size zero");
+	        }
+	        _records = new Record[_size];
+	        //Yaz.yaz_log(Yaz.LogLevel.LOG, "ResultSet Created");
+	    }
 
-		~ResultSet()
+	    ~ResultSet()
 		{
 			//Yaz.yaz_log(Yaz.LogLevel.LOG, "ResultSet Destroyed");
 			((IDisposable)this).Dispose();
@@ -68,7 +69,7 @@ namespace Zoom.Net.YazSharp
 			{
 				if (_records[index] == null)
 				{
-					IntPtr record = Yaz.ZOOM_resultset_record(_resultSet, index);
+					var record = Yaz.ZOOM_resultset_record(_resultSet, index);
 					_records[index] = new Record(record, this);
 				}
 				return _records[index];
@@ -84,18 +85,12 @@ namespace Zoom.Net.YazSharp
 			}
 		}
 
-		uint IResultSet.Size
-		{
-			get
-			{
-				return _size;
-			}
-		}
+		uint IResultSet.Size => _size;
 
-		private Connection _connection;
+	    private Connection _connection;
 		private IntPtr _resultSet;
-		private uint _size;
-		private Record[] _records;
+		private readonly uint _size;
+		private readonly Record[] _records;
 
 		private bool _disposed = false;
 		void IDisposable.Dispose()
@@ -107,8 +102,7 @@ namespace Zoom.Net.YazSharp
 			{
 				foreach (Record record in _records)
 				{
-					if (record != null)
-						record.Dispose();
+				    record?.Dispose();
 				}
 				Yaz.ZOOM_resultset_destroy(_resultSet);
 				//Yaz.yaz_log(Yaz.LogLevel.LOG, "ResultSet Disposed");
@@ -195,15 +189,9 @@ namespace Zoom.Net.YazSharp
 			}
 		}
 
-		public int Count
-		{
-			get
-			{
-				return (int) ((IResultSet)this).Size;
-			}
-		}
+		public int Count => (int) ((IResultSet)this).Size;
 
-		public void CopyTo(Array array, int index)
+	    public void CopyTo(Array array, int index)
 		{
 			throw new NotImplementedException("Underlying ResultSet is not copyable");
 		}
