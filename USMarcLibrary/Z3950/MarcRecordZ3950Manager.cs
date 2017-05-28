@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using NLog;
 using USMarcLibrary.BibEAttributes;
 using USMarcLibrary.Parsers;
 using Zoom.Net;
@@ -15,7 +16,7 @@ namespace USMarcLibrary.Z3950
 {
     public class MarcRecordZ3950Manager
     {
-        //private static readonly NLog.Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public ICollection<MarcRecord> GetRecords(Z3950Endpoint endpoint, Bib1Attr attr, string key)
         {
@@ -54,16 +55,16 @@ namespace USMarcLibrary.Z3950
                         marcRecords.Add(marcrec);
                         parser.Close();
                     }
-                    catch (Exception error)
+                    catch (Exception ex)
                     {
-                        throw error;
+                        Logger.Error(ex);
                     }
                 }
 
             }
             catch (Exception ex)
             {
-                throw ex;
+                Logger.Error(ex);
             }
 
             return marcRecords;

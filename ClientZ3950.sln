@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Yaz64", "Yaz64", "{DAE74D01-256B-42B8-B64E-207764D6F5A6}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".Imports", ".Imports", "{DAE74D01-256B-42B8-B64E-207764D6F5A6}"
 	ProjectSection(SolutionItems) = preProject
-		Yaz64\libxml2.dll = Yaz64\libxml2.dll
-		Yaz64\libxslt.dll = Yaz64\libxslt.dll
-		Yaz64\yaz4j.dll = Yaz64\yaz4j.dll
-		Yaz64\yaz5.dll = Yaz64\yaz5.dll
-		Yaz64\yaz_cond5.dll = Yaz64\yaz_cond5.dll
-		Yaz64\yaz_icu5.dll = Yaz64\yaz_icu5.dll
-		Yaz64\zlib1.dll = Yaz64\zlib1.dll
+		imports\libxml2.dll = imports\libxml2.dll
+		imports\libxslt.dll = imports\libxslt.dll
+		imports\yaz4j.dll = imports\yaz4j.dll
+		imports\yaz5.dll = imports\yaz5.dll
+		imports\yaz_cond5.dll = imports\yaz_cond5.dll
+		imports\yaz_icu5.dll = imports\yaz_icu5.dll
+		imports\zlib1.dll = imports\zlib1.dll
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RequestApp", "RequestApp\RequestApp.csproj", "{CB1478BF-0859-476A-A5E0-EE579C9134E5}"

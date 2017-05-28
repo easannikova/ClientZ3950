@@ -55,6 +55,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.4.9\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -76,7 +80,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Writers\Marc21ExchangeFormatWriter.cs" />
     <Compile Include="Writers\MarcxmlWriter.cs" />
-    <Compile Include="Z3950\MarcRecordZ3950Retriever.cs" />
+    <Compile Include="Z3950\MarcRecordZ3950Manager.cs" />
     <Compile Include="Z3950\Z3950Endpoint.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -88,6 +92,15 @@
       <Project>{9337bda3-2b49-42ea-95ac-4ade30dbd1a8}</Project>
       <Name>Zoom.Net</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
