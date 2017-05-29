@@ -39,7 +39,7 @@ namespace Zoom.Net.YazSharp
 			_resultSet = resultSet;
 		}
 
-		private ResultSet _resultSet;
+		private readonly ResultSet _resultSet;
 
 		#region IEnumerator Members
 
@@ -48,20 +48,15 @@ namespace Zoom.Net.YazSharp
 			_position = 0;
 		}
 
-		public object Current
-		{
-			get
-			{
-				return ((IResultSet)_resultSet)[_position];
-			}
-		}
+		public object Current => ((IResultSet)_resultSet)[_position];
 
-		public bool MoveNext()
+	    public bool MoveNext()
 		{
-			_position++;
-			if (_position < ((IResultSet)_resultSet).Size)
+            _position++;
+
+            if (_position < ((IResultSet)_resultSet).Size)
 			{
-				return true;
+                return true;
 			}
 			else
 			{
@@ -70,7 +65,7 @@ namespace Zoom.Net.YazSharp
 			}
 		}
 
-		private uint _position = 0;
+		private uint _position = uint.MaxValue;
 
 		#endregion
 	}

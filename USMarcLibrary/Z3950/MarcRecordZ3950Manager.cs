@@ -44,7 +44,6 @@ namespace USMarcLibrary.Z3950
                 if (records.Count == 0)
                     return marcRecords;
 
-
                 foreach (IRecord rec in records)
                 {
                     var ms = new MemoryStream(rec.Content);

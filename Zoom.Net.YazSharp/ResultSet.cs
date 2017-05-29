@@ -30,6 +30,7 @@
  */
 using System;
 using System.Collections;
+using System.IO;
 
 namespace Zoom.Net.YazSharp
 {
@@ -37,9 +38,9 @@ namespace Zoom.Net.YazSharp
 	{
 	    internal ResultSet(IntPtr resultSet, Connection connection)
 	    {
-	        _connection = connection;
 	        _resultSet = resultSet;
 	        _size = Yaz.ZOOM_resultset_size(_resultSet);
+
 	        if (0 == _size)
 	        {
 	            Console.Out.WriteLine("Yaz.ZOOM_resultset_size zero");
@@ -54,16 +55,10 @@ namespace Zoom.Net.YazSharp
 			((IDisposable)this).Dispose();
 		}
 
-            IResultSetOptionsCollection IResultSet.Options
-            {
-                get
-                    {
-                        return new ResultSetOptionsCollection(_resultSet);
-                    }
-            }
-            
+            IResultSetOptionsCollection IResultSet.Options => new ResultSetOptionsCollection(_resultSet);
 
-		IRecord IResultSet.this[uint index]
+
+	    IRecord IResultSet.this[uint index]
 		{
 			get
 			{
@@ -87,8 +82,7 @@ namespace Zoom.Net.YazSharp
 
 		uint IResultSet.Size => _size;
 
-	    private Connection _connection;
-		private IntPtr _resultSet;
+	    private IntPtr _resultSet;
 		private readonly uint _size;
 		private readonly Record[] _records;
 
@@ -106,23 +100,16 @@ namespace Zoom.Net.YazSharp
 				}
 				Yaz.ZOOM_resultset_destroy(_resultSet);
 				//Yaz.yaz_log(Yaz.LogLevel.LOG, "ResultSet Disposed");
-				_connection = null;
-				_resultSet = IntPtr.Zero;
+			    _resultSet = IntPtr.Zero;
 				_disposed = true;
 			}
 		}
 
 		#region IList Members
 
-		public bool IsReadOnly
-		{
-			get
-			{
-				return true;
-			}
-		}
+		public bool IsReadOnly => true;
 
-		object IList.this[int index]
+	    object IList.this[int index]
 		{
 			get
 			{
@@ -169,27 +156,15 @@ namespace Zoom.Net.YazSharp
 			throw new NotImplementedException("Underlying ResultSet is readonly");
 		}
 
-		public bool IsFixedSize
-		{
-			get
-			{
-				return true;
-			}
-		}
+		public bool IsFixedSize => true;
 
-		#endregion
+	    #endregion
 
 		#region ICollection Members
 
-		public bool IsSynchronized
-		{
-			get
-			{
-				return false;
-			}
-		}
+		public bool IsSynchronized => false;
 
-		public int Count => (int) ((IResultSet)this).Size;
+	    public int Count => (int) ((IResultSet)this).Size;
 
 	    public void CopyTo(Array array, int index)
 		{

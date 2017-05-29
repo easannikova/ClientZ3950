@@ -280,7 +280,7 @@ namespace USMarcLibrary
         /// <summary> Saves this MARC records as MARC XML </summary>
         /// <param name="filename"> Filename to save this MARC record as </param>
         /// <returns> TRUE if successful, otherwise FALSE </returns>
-        public bool Save_MARC_XML(string filename)
+        public bool SaveMarcToXml(string filename)
         {
             try
             {
