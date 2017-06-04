@@ -317,7 +317,7 @@ namespace USMarcLibrary
         /// <returns> This record as MARC XML </returns>
         public string To_MARC_XML()
         {
-            return MarcxmlWriter.To_MarcXML(this);
+            return MarcXmlWriter.To_MarcXML(this);
         }
 
         #endregion

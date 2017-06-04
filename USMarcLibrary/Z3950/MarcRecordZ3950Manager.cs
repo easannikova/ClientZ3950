@@ -7,8 +7,8 @@ using System.IO;
 using NLog;
 using USMarcLibrary.Bib1Attributes;
 using USMarcLibrary.Parsers;
-using Zoom.Net;
-using Zoom.Net.YazSharp;
+using ZClient.Abstract;
+using ZClient.Logic;
 
 #endregion
 
@@ -37,7 +37,7 @@ namespace USMarcLibrary.Z3950
                 if (!string.IsNullOrEmpty(endpoint.Password))
                     connection.Password = endpoint.Password;
 
-                connection.Syntax = RecordSyntax.USMARC;
+                connection.Syntax = RecordSyntax.UsMarc;
                 var query = new PrefixQuery(Prefix + attr.GetAttributes() + key);
 
                 var records = connection.Search(query);

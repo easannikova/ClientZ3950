@@ -33,7 +33,7 @@ namespace RequestApp
 
                 var manager = new MarcRecordZ3950Manager();
 
-                var str = "справочник";
+                var str = "sql";
 
                 var records = manager.GetRecords(endpoint, Bib1Attr.Title, $"\"{str}\"");
 

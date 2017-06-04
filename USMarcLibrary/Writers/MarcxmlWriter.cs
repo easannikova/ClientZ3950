@@ -12,13 +12,13 @@ using System.Xml.Linq;
 
 namespace USMarcLibrary.Writers
 {
-    public class MarcxmlWriter : IDisposable
+    public class MarcXmlWriter : IDisposable
     {
         private StreamWriter _writer;
 
         /// <summary> Constructor for a new instance of this class </summary>
         /// <param name="fileName"> Name of the output file </param>
-        public MarcxmlWriter(string fileName)
+        public MarcXmlWriter(string fileName)
         {
             // Open the stream
             _writer = new StreamWriter(fileName, false, Encoding.UTF8);
@@ -64,7 +64,7 @@ namespace USMarcLibrary.Writers
             }
             catch
             {
-
+                // ignored
             }
         }
 
