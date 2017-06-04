@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Text;
 using USMarcLibrary;
-using USMarcLibrary.BibEAttributes;
+using USMarcLibrary.Bib1Attributes;
 using USMarcLibrary.Parsers;
 using USMarcLibrary.Writers;
 using USMarcLibrary.Z3950;
@@ -31,7 +32,10 @@ namespace RequestApp
                 //var endpoint = new Z3950_Endpoint("Canadian National Catalogue", "142.78.200.109", 210, "NL");
 
                 var manager = new MarcRecordZ3950Manager();
-                var records = manager.GetRecords(endpoint, Bib1Attr.Title, "\"sql\"");
+
+                var str = "справочник";
+
+                var records = manager.GetRecords(endpoint, Bib1Attr.Title, $"\"{str}\"");
 
                 Console.WriteLine("Count results: {0}", records.Count);
 

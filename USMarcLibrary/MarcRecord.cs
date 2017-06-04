@@ -29,6 +29,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 using System.Xml;
+using NLog;
 using USMarcLibrary.ErrorHandling;
 using USMarcLibrary.Parsers;
 using USMarcLibrary.Writers;
@@ -41,6 +42,9 @@ namespace USMarcLibrary
     /// <remarks>Object created by Mark V Sullivan (2006) for University of Florida's Digital Library Center.</remarks>
     public class MarcRecord
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+
         private string _controlNumber;
         private readonly SortedList<int, List<MarcField>> _fields;
         private string _leader;
@@ -295,6 +299,7 @@ namespace USMarcLibrary
             }
             catch (Exception ex)
             {
+                Logger.Error(ex);
                 return false;
             }
         }

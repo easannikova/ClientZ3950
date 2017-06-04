@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace USMarcLibrary.BibEAttributes
+﻿namespace USMarcLibrary.Bib1Attributes
 {
     public enum Bib1Attr
     {
@@ -13,14 +7,14 @@ namespace USMarcLibrary.BibEAttributes
         LocNumber = 12,
         Date = 30,
         Author = 1003,
+        Subject = 21,
     }
 
     public static class BibAttributes
     {
-        private const string Prefix = "@attrset Bib-1 ";
         public static string GetAttributes(this Bib1Attr attr)
         {
-            return Prefix + $"@attr 1={(int)attr} ";
+            return $"@attr 1={(int)attr} ";
         }
     }
 }

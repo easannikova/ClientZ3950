@@ -47,7 +47,7 @@ namespace Zoom.Net.YazSharp
                     IntPtr options = Yaz.ZOOM_options_create();
 
                     IntPtr yazPackage 
-                        = Yaz.ZOOM_connection_package(_zoomConnection, 
+                        = Yaz.ZOOM_connection_package(ZoomConnection, 
                                                       options);
                     pack = new Package(yazPackage, this, type);
                     return pack;
