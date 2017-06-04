@@ -17,11 +17,6 @@ namespace ZClient.Logic
             _records = new Record[_size];
         }
 
-        ~ResultSet()
-        {
-            ((IDisposable) this).Dispose();
-        }
-
         IResultSetOptionsCollection IResultSet.Options => new ResultSetOptionsCollection(_resultSet);
 
 

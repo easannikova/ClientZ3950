@@ -1,30 +1,27 @@
-#region Using directives
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using NLog;
-using USMarcLibrary.Bib1Attributes;
-using USMarcLibrary.Parsers;
 using ZClient.Abstract;
+using ZClient.Library.USMarc.Bib1Attributes;
+using ZClient.Library.USMarc.Models;
+using ZClient.Library.USMarc.Parsers;
 using ZClient.Logic;
 
-#endregion
-
-namespace USMarcLibrary.Z3950
+namespace ZClient.Library.USMarc.Z3950
 {
-    public class MarcRecordZ3950Manager
+    public class Z3950Manager
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private const string Prefix = "@attrset Bib-1 ";
 
-        public ICollection<MarcRecord> GetRecords(Z3950Endpoint endpoint, Bib1Attr attr, string key)
+        public ICollection<MarcRecord> GetRecords(Server endpoint, Bib1Attr attr, string key)
         {
             var marcRecords = new Collection<MarcRecord>();
             try
             {
-                var parser = new Marc21ExchangeFormatParser();
+                var parser = new ExchangeFormatParser();
 
                 var connection = new Connection(endpoint.Uri, Convert.ToInt32(endpoint.Port))
                 {
@@ -60,7 +57,6 @@ namespace USMarcLibrary.Z3950
                         Logger.Error(ex);
                     }
                 }
-
             }
             catch (Exception ex)
             {

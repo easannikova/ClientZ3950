@@ -1,16 +1,12 @@
-
-#region Using directives
-
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using ZClient.Library.USMarc.Models;
 
-#endregion
-
-namespace USMarcLibrary.Writers
+namespace ZClient.Library.USMarc.Writers
 {
-    public class Marc21ExchangeFormatWriter : IDisposable
+    public class ExchangeFormatWriter : IDisposable
     {
         // Constants used when writing the Marc21 stream
         private const char GroupSeperator = (char) 29;
@@ -21,7 +17,7 @@ namespace USMarcLibrary.Writers
 
         /// <summary> Constructor for a new instance of this class </summary>
         /// <param name="fileName"> Name of the output file </param>
-        public Marc21ExchangeFormatWriter(string fileName)
+        public ExchangeFormatWriter(string fileName)
         {
             // Open the stream
             _writer = new StreamWriter(fileName, false, Encoding.UTF8);
@@ -31,7 +27,7 @@ namespace USMarcLibrary.Writers
         /// <param name="record">New record to append </param>
         public void AppendRecord(MarcRecord record)
         {
-            _writer.WriteLine(To_Machine_Readable_Record(record));
+            _writer.WriteLine(ToMachineReadableRecord(record));
         }
 
         /// <summary> Append a list of records to the file </summary>
@@ -40,7 +36,7 @@ namespace USMarcLibrary.Writers
         {
             foreach (MarcRecord record in records)
             {
-                _writer.WriteLine(To_Machine_Readable_Record(record));
+                _writer.WriteLine(ToMachineReadableRecord(record));
             }
         }
 
@@ -67,7 +63,7 @@ namespace USMarcLibrary.Writers
         /// <summary> Returns a string which represents a record in machine readable record format. </summary>
         /// <param name="record"> MARC record to convert to MARC21 </param>
         /// <returns> MARC record as MARC21 Exchange format record string</returns>
-        public static string To_Machine_Readable_Record(MarcRecord record)
+        public static string ToMachineReadableRecord(MarcRecord record)
         {
             // Create the stringbuilder for this
             var directory = new StringBuilder(1000);

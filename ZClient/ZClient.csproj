@@ -91,13 +91,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\USMarcLibrary\USMarcLibrary.csproj">
-      <Project>{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}</Project>
-      <Name>USMarcLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ZClient.Models\ZClient.Models.csproj">
-      <Project>{D3EE06E1-2E28-4B79-8D0F-E25A0ADEE88A}</Project>
-      <Name>ZClient.Models</Name>
+    <ProjectReference Include="..\ZClient.Library.USMarc\ZClient.Library.USMarc.csproj">
+      <Project>{e92393b7-c13c-407b-b24f-a6ced0c2f2ea}</Project>
+      <Name>ZClient.Library.USMarc</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

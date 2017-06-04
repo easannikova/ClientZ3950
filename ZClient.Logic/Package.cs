@@ -12,11 +12,6 @@ namespace ZClient.Logic
             _package = pack;
         }
 
-        ~Package()
-        {
-            ((IDisposable) this).Dispose();
-        }
-
         IPackageOptionsCollection IPackage.Options => new PackageOptionsCollection(_package);
 
         void IPackage.Send()

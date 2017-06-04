@@ -10,11 +10,6 @@ namespace ZClient.Logic
             _record = record;
         }
 
-        ~Record()
-        {
-            Dispose();
-        }
-
         public byte[] Content
         {
             get

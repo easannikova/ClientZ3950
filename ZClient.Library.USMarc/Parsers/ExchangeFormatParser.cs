@@ -1,15 +1,12 @@
-#region Using directives
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using USMarcLibrary.ErrorHandling;
+using ZClient.Library.USMarc.ErrorHandling;
+using ZClient.Library.USMarc.Models;
 
-#endregion
-
-namespace USMarcLibrary.Parsers
+namespace ZClient.Library.USMarc.Parsers
 {
     /// <summary> Enumeration indicates the type of CHARACTER encoding within the MARC record </summary>
     public enum RecordCharacterEncoding : byte
@@ -40,7 +37,7 @@ namespace USMarcLibrary.Parsers
     /// You can either pass in the stream or file to read into the constructor and immediately begin using Next() to step
     /// through them, or you can use the empty constructor and call the Parse methods for the first record. <br /><br />
     /// To  use the IEnumerable interface, you must pass in the Stream or filename in the constructor.</remarks>
-    public class Marc21ExchangeFormatParser : IEnumerable<MarcRecord>, IEnumerator<MarcRecord>
+    public class ExchangeFormatParser : IEnumerable<MarcRecord>, IEnumerator<MarcRecord>
     {
         // Stream used to read the Marc21 records
         private BinaryReader _reader;
@@ -59,14 +56,14 @@ namespace USMarcLibrary.Parsers
         #region Constructors 
 
         /// <summary> Constructor for a new instance of this class </summary>
-        public Marc21ExchangeFormatParser()
+        public ExchangeFormatParser()
         {
             // Constructor does nothing
         }
 
         /// <summary> Constructor for a new instance of this class </summary>
         /// <param name="marc21Stream"> Open stream from which to read Marc21 records </param>
-        public Marc21ExchangeFormatParser(Stream marc21Stream)
+        public ExchangeFormatParser(Stream marc21Stream)
         {
             // Create the new reader object
             _reader = new BinaryReader(marc21Stream);
@@ -74,7 +71,7 @@ namespace USMarcLibrary.Parsers
 
         /// <summary> Constructor for a new instance of this class </summary>
         /// <param name="marc21File"> Name of the file to parse </param>
-        public Marc21ExchangeFormatParser(string marc21File)
+        public ExchangeFormatParser(string marc21File)
         {
             // Create the new reader object
             _reader = new BinaryReader(File.Open(marc21File, FileMode.Open));
@@ -144,7 +141,7 @@ namespace USMarcLibrary.Parsers
             // Create the MARC record to return and subfield collection
             var thisRecord = new MarcRecord();
 
-            var fieldDatas = new Dictionary<short, Marc21ParserVariableFieldData>();
+            var fieldDatas = new Dictionary<short, ParserVariableFieldData>();
             try
             {
                 // Some values to check the end of the file
@@ -218,7 +215,7 @@ namespace USMarcLibrary.Parsers
                 }
 
                 // Now, read in all the directory information
-                var directoryEntries = new List<Marc21ParserDirectoryEntry>();
+                var directoryEntries = new List<ParserDirectoryEntry>();
                 count = 0;
                 int tag = 0;
                 int fieldLength = 0;
@@ -230,7 +227,7 @@ namespace USMarcLibrary.Parsers
                     if (!short.TryParse(((char) result).ToString(), out temp))
                     {
                         if (ActionOnError == ActionOnErrorEncounteredEnum.StoreInRecord)
-                            thisRecord.Add_Error(MarcRecordParsingErrorTypeEnum.InvalidDirectoryEncountered,
+                            thisRecord.AddError(MarcRecordParsingErrorTypeEnum.InvalidDirectoryEncountered,
                                 "Found invalid (non-numeric) character in a directory entry.");
                         else
                             throw new ApplicationException("Found invalid (non-numeric) character in a directory entry.");
@@ -270,7 +267,7 @@ namespace USMarcLibrary.Parsers
                     // and reset the values for the next directory
                     if (count == 12)
                     {
-                        directoryEntries.Add(new Marc21ParserDirectoryEntry((short) tag, (short) fieldLength,
+                        directoryEntries.Add(new ParserDirectoryEntry((short) tag, (short) fieldLength,
                             (short) startingPosition));
                         tag = 0;
                         fieldLength = 0;
@@ -314,7 +311,7 @@ namespace USMarcLibrary.Parsers
 
                         // Add the field to the list of variable data
                         fieldDatas.Add((short) startIndex,
-                            new Marc21ParserVariableFieldData((short) startIndex, fieldAsString));
+                            new ParserVariableFieldData((short) startIndex, fieldAsString));
 
                         // This may be the last field, so save this index
                         lastFieldStartIndex = (short) startIndex;
@@ -336,7 +333,7 @@ namespace USMarcLibrary.Parsers
                 // Now, step through the directory, retrieve each pre-converted field data,
                 // and finish parsing
                 int directoryErrorCorrection = 0;
-                foreach (Marc21ParserDirectoryEntry directoryEntry in directoryEntries)
+                foreach (ParserDirectoryEntry directoryEntry in directoryEntries)
                 {
                     // Get the field
                     if (!fieldDatas.ContainsKey((short) (directoryEntry.StartingPosition + directoryErrorCorrection)))
@@ -355,7 +352,7 @@ namespace USMarcLibrary.Parsers
                                 (short) (directoryEntry.StartingPosition + directoryErrorCorrection)))
                         {
                             if (ActionOnError == ActionOnErrorEncounteredEnum.StoreInRecord)
-                                thisRecord.Add_Error(
+                                thisRecord.AddError(
                                     MarcRecordParsingErrorTypeEnum.DirectoryFieldMismatchUnhandled);
                             else
                                 throw new ApplicationException(
@@ -364,32 +361,31 @@ namespace USMarcLibrary.Parsers
                         else
                         {
                             // This worked, but add a warning none-the-less
-                            thisRecord.Add_Warning(
+                            thisRecord.AddWarning(
                                 MarcRecordParsingWarningTypeEnum.DirectoryFieldMismatchHandled);
                         }
                     }
-                    Marc21ParserVariableFieldData fieldData =
-                        fieldDatas[(short) (directoryEntry.StartingPosition + directoryErrorCorrection)];
-                    string variable_field_data = fieldData.FieldData;
+                    var fieldData = fieldDatas[(short) (directoryEntry.StartingPosition + directoryErrorCorrection)];
+                    var variableFieldData = fieldData.FieldData;
 
                     // See if this row has an indicator
-                    string indicator = "";
-                    if ((variable_field_data.Length > 3) && (variable_field_data[2] == (UnitSeperator)))
+                    var indicator = "";
+                    if ((variableFieldData.Length > 3) && (variableFieldData[2] == (UnitSeperator)))
                     {
-                        indicator = variable_field_data.Substring(0, 2);
-                        variable_field_data = variable_field_data.Substring(2);
+                        indicator = variableFieldData.Substring(0, 2);
+                        variableFieldData = variableFieldData.Substring(2);
                     }
                     else
-                        variable_field_data = variable_field_data.Substring(0);
+                        variableFieldData = variableFieldData.Substring(0);
 
                     // Is this split into seperate subfields?
-                    if ((variable_field_data.Length > 1) && (variable_field_data[0] == (UnitSeperator)))
+                    if ((variableFieldData.Length > 1) && (variableFieldData[0] == (UnitSeperator)))
                     {
                         // Split this into subfields
-                        string[] subfields = variable_field_data.Substring(1).Split(new[] {UnitSeperator});
+                        var subfields = variableFieldData.Substring(1).Split(UnitSeperator);
 
                         // Create the new field
-                        MarcField newField = new MarcField
+                        var newField = new MarcField
                         {
                             Tag = Convert.ToInt32(directoryEntry.Tag),
                             Indicators = indicator
@@ -403,12 +399,12 @@ namespace USMarcLibrary.Parsers
                         }
 
                         // Add this entry to the current record
-                        thisRecord.Add_Field(newField);
+                        thisRecord.AddField(newField);
                     }
                     else
                     {
                         // Must be just one subfield
-                        thisRecord.Add_Field(Convert.ToInt32(directoryEntry.Tag), variable_field_data);
+                        thisRecord.AddField(Convert.ToInt32(directoryEntry.Tag), variableFieldData);
                     }
                 }
 
@@ -422,7 +418,7 @@ namespace USMarcLibrary.Parsers
             catch (EndOfStreamException)
             {
                 if (ActionOnError == ActionOnErrorEncounteredEnum.StoreInRecord)
-                    thisRecord.Add_Error(MarcRecordParsingErrorTypeEnum.UnexpectedEndOfStreamEncountered);
+                    thisRecord.AddError(MarcRecordParsingErrorTypeEnum.UnexpectedEndOfStreamEncountered);
                 else
                     throw new ApplicationException(
                         "Unexpected end of stream encountered!  Input stream may be invalid format or truncated.");
@@ -448,7 +444,7 @@ namespace USMarcLibrary.Parsers
                 // Get this byte frmo the array
                 var marcByte1 = (int) t;
 
-                builder.Append((char)marcByte1);
+                builder.Append((char) marcByte1);
             }
 
             // Return the string

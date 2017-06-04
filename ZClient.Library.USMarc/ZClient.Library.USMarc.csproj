@@ -8,8 +8,8 @@
     <ProjectGuid>{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>USMarcLibrary</RootNamespace>
-    <AssemblyName>USMarcLibrary</AssemblyName>
+    <RootNamespace>ZClient.Library.USMarc</RootNamespace>
+    <AssemblyName>ZClient.Library.USMarc</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -68,20 +68,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bib1Attributes\Bib1Attr.cs" />
-    <Compile Include="MarcField.cs" />
-    <Compile Include="MarcRecord.cs" />
-    <Compile Include="ErrorHandling\MarcRecordParsingError.cs" />
-    <Compile Include="ErrorHandling\MarcRecordParsingWarning.cs" />
-    <Compile Include="MarcSubfield.cs" />
-    <Compile Include="Parsers\Marc21ExchangeFormatParser.cs" />
-    <Compile Include="Parsers\Marc21ParserDirectoryEntry.cs" />
-    <Compile Include="Parsers\Marc21ParserVariableFieldData.cs" />
-    <Compile Include="Parsers\MarcxmlParser.cs" />
+    <Compile Include="Models\MarcField.cs" />
+    <Compile Include="Models\MarcRecord.cs" />
+    <Compile Include="ErrorHandling\ParsingError.cs" />
+    <Compile Include="ErrorHandling\ParsingWarning.cs" />
+    <Compile Include="Models\MarcSubfield.cs" />
+    <Compile Include="Parsers\ExchangeFormatParser.cs" />
+    <Compile Include="Parsers\ParserDirectoryEntry.cs" />
+    <Compile Include="Parsers\ParserVariableFieldData.cs" />
+    <Compile Include="Parsers\MarcXmlParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Writers\Marc21ExchangeFormatWriter.cs" />
+    <Compile Include="Writers\ExchangeFormatWriter.cs" />
     <Compile Include="Writers\MarcXmlWriter.cs" />
-    <Compile Include="Z3950\MarcRecordZ3950Manager.cs" />
-    <Compile Include="Z3950\Z3950Endpoint.cs" />
+    <Compile Include="Z3950\Z3950Manager.cs" />
+    <Compile Include="Z3950\Server.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ZClient.Logic\ZClient.Logic.csproj">

@@ -1,8 +1,8 @@
 
-namespace USMarcLibrary.Z3950
+namespace ZClient.Library.USMarc.Z3950
 {
     /// <summary> Class stores information regarding a Z39.50 endpoint associated with this user </summary>
-    public class Z3950Endpoint
+    public class Server
     {
         /// <summary> Arbitrary name associated with this Z39.50 endpoint by the user</summary>
         public string Name { get; set; }
@@ -31,27 +31,27 @@ namespace USMarcLibrary.Z3950
         /// <param name="uri"> URI / URL for the connection to the Z39.50 endpoint </param>
         /// <param name="port"> Port for the connection to the Z39.50 endpoint </param>
         /// <param name="databaseName"> Name of the database within the Z39.50 endpoint  </param>
-        public Z3950Endpoint(string name, string uri, uint port, string databaseName)
+        public Server(string name, string uri, uint port, string databaseName)
         {
-            this.Name = name;
-            this.Uri = uri;
-            this.Port = port;
-            this.DatabaseName = databaseName;
-            this.Username = string.Empty;
-            this.Password = string.Empty;
-            this.SavePasswordFlag = false;
+            Name = name;
+            Uri = uri;
+            Port = port;
+            DatabaseName = databaseName;
+            Username = string.Empty;
+            Password = string.Empty;
+            SavePasswordFlag = false;
         }
 
         /// <summary> Constructor for a new instance of the Z39.50 endpoint object </summary>
-        public Z3950Endpoint()
+        public Server()
         {
-            this.Name = string.Empty;
-            this.Uri = string.Empty;
-            this.Port = 0;
-            this.DatabaseName = string.Empty;
-            this.Username = string.Empty;
-            this.Password = string.Empty;
-            this.SavePasswordFlag = false;
+            Name = string.Empty;
+            Uri = string.Empty;
+            Port = 0;
+            DatabaseName = string.Empty;
+            Username = string.Empty;
+            Password = string.Empty;
+            SavePasswordFlag = false;
         }
 
         /// <summary> Constructor for a new instance of the Z39.50 endpoint object </summary>
@@ -60,27 +60,32 @@ namespace USMarcLibrary.Z3950
         /// <param name="port"> Port for the connection to the Z39.50 endpoint </param>
         /// <param name="databaseName"> Name of the database within the Z39.50 endpoint  </param>
         /// <param name="username"> Username for the connection to the endpoint, if one is needed </param>
-        public Z3950Endpoint(string name, string uri, uint port, string databaseName, string username)
+        public Server(string name, string uri, uint port, string databaseName, string username)
         {
-            this.Name = name;
-            this.Uri = uri;
-            this.Port = port;
-            this.DatabaseName = databaseName;
-            this.Username = username;
-            this.Password = string.Empty;
-            this.SavePasswordFlag = false;
+            Name = name;
+            Uri = uri;
+            Port = port;
+            DatabaseName = databaseName;
+            Username = username;
+            Password = string.Empty;
+            SavePasswordFlag = false;
         }
 
         /// <summary> Create a copy of this object </summary>
         /// <returns> Copy of this object with all the same data </returns>
-        public Z3950Endpoint Copy()
+        public Server Copy()
         {
-            var copyPoint = new Z3950Endpoint(Name, Uri, Port, DatabaseName, Username)
+            var copyPoint = new Server(Name, Uri, Port, DatabaseName, Username)
             {
                 Password = Password,
                 SavePasswordFlag = SavePasswordFlag
             };
             return copyPoint;
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using USMarcLibrary;
-using USMarcLibrary.Bib1Attributes;
-using USMarcLibrary.Z3950;
-using ZClient.Models;
+using ZClient.Library.USMarc;
+using ZClient.Library.USMarc.Bib1Attributes;
+using ZClient.Library.USMarc.Models;
+using ZClient.Library.USMarc.Z3950;
 
 namespace ZClient.Search
 {
@@ -27,13 +27,13 @@ namespace ZClient.Search
         public IDictionary<Server, IEnumerable<MarcRecord>> Search()
         {
             var result = new Dictionary<Server, IEnumerable<MarcRecord>>();
-            var manager = new MarcRecordZ3950Manager();
+            var manager = new Z3950Manager();
 
             foreach (var server in _servers)
             {
-                var endpoint = new Z3950Endpoint(server.Name, server.Host, server.Port, server.Database);
-                var records = manager.GetRecords(endpoint, _bib1Attr, _query);
-                result.Add(server, records);
+                var records = manager.GetRecords(server, _bib1Attr, _query);
+                if (records.Count > 0)
+                    result.Add(server, records);
             }
 
             return result;

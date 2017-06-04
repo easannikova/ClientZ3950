@@ -1,4 +1,4 @@
-﻿namespace USMarcLibrary.Bib1Attributes
+﻿namespace ZClient.Library.USMarc.Bib1Attributes
 {
     public enum Bib1Attr
     {

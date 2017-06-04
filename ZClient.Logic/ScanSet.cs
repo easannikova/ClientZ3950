@@ -11,11 +11,6 @@ namespace ZClient.Logic
             _scanSet = scanSet;
         }
 
-        ~ScanSet()
-        {
-            Dispose();
-        }
-
         public IScanTerm this[uint index]
         {
             get

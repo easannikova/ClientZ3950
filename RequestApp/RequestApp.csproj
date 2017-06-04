@@ -50,7 +50,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\USMarcLibrary\USMarcLibrary.csproj">
+    <ProjectReference Include="..\ZClient.Library.USMarc\ZClient.Library.USMarc.csproj">
       <Project>{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}</Project>
       <Name>USMarcLibrary</Name>
     </ProjectReference>

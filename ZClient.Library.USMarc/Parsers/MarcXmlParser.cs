@@ -1,22 +1,18 @@
-
-#region Using directives
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using ZClient.Library.USMarc.Models;
 
-#endregion
-
-namespace USMarcLibrary.Parsers
+namespace ZClient.Library.USMarc.Parsers
 {
     /// <summary> Parser steps through the records in a MarcXML file or stream. </summary>
     /// <remarks> Written by Mark Sullivan for the University of Florida Digital Library<br /><br />
     /// You can either pass in the stream or file to read into the constructor and immediately begin using Next() to step
     /// through them, or you can use the empty constructor and call the Parse methods for the first record. <br /><br />
     /// To  use the IEnumerable interface, you must pass in the Stream or filename in the constructor.</remarks>
-    public class MarcxmlParser : IEnumerable<MarcRecord>, IEnumerator<MarcRecord>
+    public class MarcXmlParser : IEnumerable<MarcRecord>, IEnumerator<MarcRecord>
     {
         // Stream used to read the MarcXML records
         private Stream _baseStream;
@@ -26,14 +22,14 @@ namespace USMarcLibrary.Parsers
         #region Constructors 
 
         /// <summary> Constructor for a new instance of this class </summary>
-        public MarcxmlParser()
+        public MarcXmlParser()
         {
             // Constructor does nothing
         }
 
         /// <summary> Constructor for a new instance of this class </summary>
         /// <param name="marcXmlStream"> Open stream from which to read MarcXML records </param>
-        public MarcxmlParser(Stream marcXmlStream)
+        public MarcXmlParser(Stream marcXmlStream)
         {
             // Create the new reader object
             _reader = new XmlTextReader(marcXmlStream);
@@ -44,7 +40,7 @@ namespace USMarcLibrary.Parsers
 
         /// <summary> Constructor for a new instance of this class </summary>
         /// <param name="marcXmlFile"> Name of the file to parse </param>
-        public MarcxmlParser(string marcXmlFile)
+        public MarcXmlParser(string marcXmlFile)
         {
             // Create the new reader object
             _reader = new XmlTextReader(marcXmlFile);
@@ -58,9 +54,9 @@ namespace USMarcLibrary.Parsers
         /// <summary> Begins parsing from a stream containing MarcXML records. </summary>
         /// <param name="marcXmlStream"> Open stream from which to read MarcXML records </param>
         /// <returns> A built record, or NULL if no records are contained within the file </returns>
-		public MarcRecord Parse( Stream marcXmlStream )
-		{
-			// Create the new reader object
+        public MarcRecord Parse(Stream marcXmlStream)
+        {
+            // Create the new reader object
             _reader = new XmlTextReader(marcXmlStream);
 
             // Save the stream for resetting purposes
@@ -69,13 +65,13 @@ namespace USMarcLibrary.Parsers
 
             // Return the first record
             return parse_next_record();
-		}
+        }
 
         /// <summary> Begins parsing a new MarcXML file. </summary>
         /// <param name="marcXmlFile"> Name of the file to parse </param>
-		/// <returns> A built record, or NULL if no records are contained within the file </returns>
+        /// <returns> A built record, or NULL if no records are contained within the file </returns>
         public MarcRecord Parse(string marcXmlFile)
-		{
+        {
             // Create the new reader object
             _reader = new XmlTextReader(marcXmlFile);
 
@@ -83,16 +79,16 @@ namespace USMarcLibrary.Parsers
             _filename = marcXmlFile;
             _baseStream = null;
 
-			// Return the first record
-			return parse_next_record();
-		}
+            // Return the first record
+            return parse_next_record();
+        }
 
         /// <summary> Returns the next record in the MarcXML_File file or stream </summary>
-		/// <returns> Next object, or NULL </returns>
-		public MarcRecord Next()
+        /// <returns> Next object, or NULL </returns>
+        public MarcRecord Next()
         {
-            if ( _reader != null )
-				return parse_next_record();
+            if (_reader != null)
+                return parse_next_record();
             return null;
         }
 
@@ -117,11 +113,7 @@ namespace USMarcLibrary.Parsers
 
         /// <summary> Flag indicates if an end of file has been reached </summary>
         /// <remarks> Whenever the EOF is reached, the stream is closed automatically </remarks>
-        public bool EofFlag
-        {
-            get;
-            set;
-        }
+        public bool EofFlag { get; set; }
 
         private MarcRecord parse_next_record()
         {
@@ -129,7 +121,7 @@ namespace USMarcLibrary.Parsers
             MarcRecord thisRecord = new MarcRecord();
 
             // Try to read this
-            Read_MARC_Info(_reader, thisRecord);
+            ReadMarcInfo(_reader, thisRecord);
 
             // Return this record
             return thisRecord;
@@ -179,18 +171,11 @@ namespace USMarcLibrary.Parsers
 
         /// <summary> Returns the current record </summary>
         /// <remarks> Required to implement IEnumerable </remarks>
-        public MarcRecord Current
-        {
-            get;
-            private set;
-        }
+        public MarcRecord Current { get; private set; }
 
         /// <summary> Returns the current record </summary>
         /// <remarks> Required to implement IEnumerable </remarks>
-        object IEnumerator.Current
-        {
-            get { return Current; }
-        }
+        object IEnumerator.Current => Current;
 
         /// <summary> Moves to the next record, and returns TRUE if one existed </summary>
         /// <returns> TRUE if another record was found, otherwise FALSE </returns>
@@ -207,29 +192,29 @@ namespace USMarcLibrary.Parsers
         /// <remarks> Required to implement IEnumerable </remarks>
         public void Reset()
         {
-            if ( _baseStream != null )
+            if (_baseStream != null)
             {
-                if ( _baseStream.CanSeek)
+                if (_baseStream.CanSeek)
                     _baseStream.Seek(0, SeekOrigin.Begin);
                 _reader = new XmlTextReader(_baseStream);
             }
-            else if ( !String.IsNullOrEmpty(_filename))
+            else if (!String.IsNullOrEmpty(_filename))
             {
-                if ( _reader != null )
+                if (_reader != null)
                     Close();
-                _reader = new XmlTextReader(_filename );
+                _reader = new XmlTextReader(_filename);
             }
         }
 
         #endregion
 
         #region Static methods read a single MARC record from a MarcXML file or nodereader 
-        
+
         /// <summary> Reads the data from a MARC XML file into this record </summary>
         /// <param name="marcXmlFile">Input MARC XML file</param>
         /// <param name="record"> Record into which to read the contents of the MarcXML file </param>
         /// <returns>TRUE if successful, otherwise FALSE </returns>
-        public static bool Read_From_MARC_XML_File(string marcXmlFile, MarcRecord record )
+        public static bool Read_From_MARC_XML_File(string marcXmlFile, MarcRecord record)
         {
             try
             {
@@ -242,7 +227,7 @@ namespace USMarcLibrary.Parsers
                 // create the node reader
                 var nodeReader = new XmlTextReader(reader);
 
-                return Read_MARC_Info(nodeReader, record );
+                return ReadMarcInfo(nodeReader, record);
 
             }
             catch
@@ -256,7 +241,7 @@ namespace USMarcLibrary.Parsers
         /// <param name="nodeReader">XML Node Reader </param>
         /// <param name="record"> Record into which to read the contents of the MarcXML file </param>
         /// <returns>TRUE if successful, otherwise FALSE </returns>
-        public static bool Read_MARC_Info(XmlTextReader nodeReader, MarcRecord record)
+        public static bool ReadMarcInfo(XmlTextReader nodeReader, MarcRecord record)
         {
             try
             {
@@ -289,7 +274,7 @@ namespace USMarcLibrary.Parsers
                                     {
                                         // Move to the value and then add this
                                         nodeReader.Read();
-                                        record.Add_Field(tag, nodeReader.Value);
+                                        record.AddField(tag, nodeReader.Value);
                                     }
                                 }
                                 break;
@@ -319,15 +304,17 @@ namespace USMarcLibrary.Parsers
                                 }
 
                                 // Add this datafield
-                                MarcField newField = record.Add_Field(tag, ind1, ind2);
+                                MarcField newField = record.AddField(tag, ind1, ind2);
 
                                 // Now, add each subfield
                                 while (nodeReader.Read())
                                 {
-                                    if ((nodeReader.NodeType == XmlNodeType.EndElement) && (nodeReader.Name.Replace("marc:", "") == "datafield"))
+                                    if ((nodeReader.NodeType == XmlNodeType.EndElement) &&
+                                        (nodeReader.Name.Replace("marc:", "") == "datafield"))
                                         break;
 
-                                    if ((nodeReader.NodeType == XmlNodeType.Element) && (nodeReader.Name.Replace("marc:", "") == "subfield"))
+                                    if ((nodeReader.NodeType == XmlNodeType.Element) &&
+                                        (nodeReader.Name.Replace("marc:", "") == "subfield"))
                                     {
                                         // Get the code
                                         nodeReader.MoveToFirstAttribute();
@@ -343,7 +330,8 @@ namespace USMarcLibrary.Parsers
                                         // Do some special stuff if this is the 260
                                         if (tag == 260)
                                         {
-                                            newField.ControlFieldValue = newField.ControlFieldValue + "|" + subfield + " " + dataValue + " ";
+                                            newField.ControlFieldValue = newField.ControlFieldValue + "|" + subfield +
+                                                                         " " + dataValue + " ";
                                         }
                                     }
                                 }

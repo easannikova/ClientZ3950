@@ -1,16 +1,12 @@
-
-#region Using directives
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml.Linq;
+using ZClient.Library.USMarc.Models;
 
-#endregion
-
-namespace USMarcLibrary.Writers
+namespace ZClient.Library.USMarc.Writers
 {
     public class MarcXmlWriter : IDisposable
     {
@@ -36,16 +32,16 @@ namespace USMarcLibrary.Writers
         /// <param name="Record">New record to append </param>
         public void AppendRecord(MarcRecord Record)
         {
-            _writer.WriteLine(To_MarcXML(Record, false));
+            _writer.WriteLine(ToMarcXml(Record, false));
         }
 
         /// <summary> Append a list of records to the file </summary>
         /// <param name="records">Collection of records to append </param>
         public void AppendRecords(IEnumerable<MarcRecord> records)
         {
-            foreach (MarcRecord record in records)
+            foreach (var record in records)
             {
-                _writer.WriteLine(To_MarcXML(record, false));
+                _writer.WriteLine(ToMarcXml(record, false));
             }
         }
 
@@ -73,16 +69,16 @@ namespace USMarcLibrary.Writers
         /// <summary> Returns this MARC record as a MarcXML-formatted string </summary>
         /// <param name="record"> MARC record to convert to a MarcXML-formatted string</param>
         /// <returns> This record as MarcXML-formatted string with the XML and collection declarative tags around the record </returns>
-        public static string To_MarcXML(MarcRecord record)
+        public static string ToMarcXml(MarcRecord record)
         {
-            return To_MarcXML(record, true);
+            return ToMarcXml(record, true);
         }
 
         /// <summary> Returns this MARC record as a MarcXML-formatted string </summary>
         /// <param name="record"> MARC record to convert to a MarcXML-formatted string</param>
         /// <param name="includeStartEndTags"> Flag indicates whether to include the XML and collection declarative tags around the record </param>
         /// <returns> This record as MarcXML-formatted string </returns>
-        public static string To_MarcXML(MarcRecord record, bool includeStartEndTags)
+        public static string ToMarcXml(MarcRecord record, bool includeStartEndTags)
         {
             var returnValue = new StringBuilder(5000);
 

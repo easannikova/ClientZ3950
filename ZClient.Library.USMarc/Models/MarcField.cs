@@ -1,15 +1,9 @@
-
-#region Using directives
-
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
-#endregion
-
-namespace USMarcLibrary
+namespace ZClient.Library.USMarc.Models
 {
     /// <summary> Stores the information for a field in a MARC21 record ( <see cref="MarcRecord"/> )</summary>
     /// <remarks>Object created by Mark V Sullivan (2006) for University of Florida's Digital Library Center.</remarks>
@@ -95,12 +89,7 @@ namespace USMarcLibrary
         /// <remarks> This is generally used for the control fields at the beginning of the MARC record </remarks>
         public string ControlFieldValue
         {
-            get
-            {
-                if (String.IsNullOrEmpty(_data))
-                    return String.Empty;
-                return _data;
-            }
+            get { return string.IsNullOrEmpty(_data) ? string.Empty : _data; }
             set { _data = value; }
         }
 
@@ -230,7 +219,7 @@ namespace USMarcLibrary
         public override string ToString()
         {
             // Build the return value
-            var returnValue = new StringBuilder(Tag.ToString() + " " + Indicator1 + Indicator2 + " ");
+            var returnValue = new StringBuilder(Tag + " " + Indicator1 + Indicator2 + " ");
             foreach (var thisSubfield in _subfields)
             {
                 returnValue.Append(thisSubfield + " ");

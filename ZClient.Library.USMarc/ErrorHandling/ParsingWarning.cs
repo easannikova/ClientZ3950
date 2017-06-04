@@ -1,10 +1,6 @@
-#region Using directives
-
 using System;
 
-#endregion
-
-namespace USMarcLibrary.ErrorHandling
+namespace ZClient.Library.USMarc.ErrorHandling
 {
     /// <summary> Enumeration for the basic warning types which need to be attached
     /// to a MARC record during parsing (mostly from a MARC21 exchange file)  </summary>
@@ -26,7 +22,7 @@ namespace USMarcLibrary.ErrorHandling
 
     /// <summary> Class stores basic warning or error information which may 
     /// occur during processing </summary>
-    public class MarcRecordParsingWarning : IEquatable<MarcRecordParsingWarning>
+    public class ParsingWarning : IEquatable<ParsingWarning>
     {
         /// <summary> Any additional information about a warning </summary>
         /// <remarks> This is different then the generic text for the warning; this is 
@@ -39,7 +35,7 @@ namespace USMarcLibrary.ErrorHandling
         /// <summary> Constructor for a new instance of the MARC_Record_Parsing_Warning class </summary>
         /// <param name="warningType"> Type of this warning </param>
         /// <param name="warningDetails"> Any additional information about a warning </param>
-        public MarcRecordParsingWarning(MarcRecordParsingWarningTypeEnum warningType, string warningDetails)
+        public ParsingWarning(MarcRecordParsingWarningTypeEnum warningType, string warningDetails)
         {
             WarningType = warningType;
             WarningDetails = warningDetails;
@@ -47,7 +43,7 @@ namespace USMarcLibrary.ErrorHandling
 
         /// <summary> Constructor for a new instance of the MARC_Record_Parsing_Warning class </summary>
         /// <param name="warningType"> Type of this warning </param>
-        public MarcRecordParsingWarning(MarcRecordParsingWarningTypeEnum warningType)
+        public ParsingWarning(MarcRecordParsingWarningTypeEnum warningType)
         {
             WarningType = warningType;
             WarningDetails = String.Empty;
@@ -59,7 +55,7 @@ namespace USMarcLibrary.ErrorHandling
         /// warning type </summary>
         /// <param name="other"> Other warning to check for type match </param>
         /// <returns> TRUE if the two warnings are the same type, otherwise FALSE </returns>
-        public bool Equals(MarcRecordParsingWarning other)
+        public bool Equals(ParsingWarning other)
         {
             return other != null && WarningType == other.WarningType;
         }

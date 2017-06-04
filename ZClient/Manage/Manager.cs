@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using USMarcLibrary.Bib1Attributes;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using ZClient.Abstract;
 using ZClient.CsvResult;
+using ZClient.Library.USMarc.Bib1Attributes;
+using ZClient.Library.USMarc.Z3950;
 using ZClient.Loader;
-using ZClient.Models;
 using ZClient.Search;
 
 namespace ZClient.Manage
@@ -31,11 +28,21 @@ namespace ZClient.Manage
                 Servers.AddRange(collection);
         }
 
-        public void Search(string query)
+        public IDictionary<Server, IEnumerable<string>> Search(string query)
         {
             var search = new SearchQuery(Servers, Bib1Attr.ISBN, query);
             var found = search.Search();
-        }
+            var result = new Dictionary<Server, IEnumerable<string>>();
 
+            foreach (var pair in found)
+            {
+                var xmlRecord = new Collection<string>();
+                foreach (var marcRecord in pair.Value)
+                    xmlRecord.Add(marcRecord.ToMarcXml());
+                result.Add(pair.Key, xmlRecord);
+            }
+
+            return result;
+        }
     }
 }

@@ -1,28 +1,3 @@
-#region License and Copyright
-
-//          SobekCM MARC Library ( Version 1.2 )
-//          
-//          Copyright (2005-2012) Mark Sullivan. ( Mark.V.Sullivan@gmail.com )
-//          
-//          This file is part of SobekCM MARC Library.
-//          
-//          SobekCM MARC Library is free software: you can redistribute it and/or modify
-//          it under the terms of the GNU Lesser Public License as published by
-//          the Free Software Foundation, either version 3 of the License, or
-//          (at your option) any later version.
-//            
-//          SobekCM MARC Library is distributed in the hope that it will be useful,
-//          but WITHOUT ANY WARRANTY; without even the implied warranty of
-//          MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//          GNU Lesser Public License for more details.
-//            
-//          You should have received a copy of the GNU Lesser Public License
-//          along with SobekCM MARC Library.  If not, see <http://www.gnu.org/licenses/>.
-
-#endregion
-
-#region Using directives
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -30,13 +5,11 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using NLog;
-using USMarcLibrary.ErrorHandling;
-using USMarcLibrary.Parsers;
-using USMarcLibrary.Writers;
+using ZClient.Library.USMarc.ErrorHandling;
+using ZClient.Library.USMarc.Parsers;
+using ZClient.Library.USMarc.Writers;
 
-#endregion
-
-namespace USMarcLibrary
+namespace ZClient.Library.USMarc.Models
 {
     /// <summary> Stores all the information from a MARC21 record </summary>
     /// <remarks>Object created by Mark V Sullivan (2006) for University of Florida's Digital Library Center.</remarks>
@@ -48,8 +21,8 @@ namespace USMarcLibrary
         private string _controlNumber;
         private readonly SortedList<int, List<MarcField>> _fields;
         private string _leader;
-        private List<MarcRecordParsingWarning> _warnings;
-        private List<MarcRecordParsingError> _errors;
+        private List<ParsingWarning> _warnings;
+        private List<ParsingError> _errors;
 
         /// <summary> Constructor for a new instance of the MARC_XML_Record class </summary>
         public MarcRecord()
@@ -96,8 +69,8 @@ namespace USMarcLibrary
                     directoryLength += 12;
                 }
 
-                string totalLengthString = (totalLength.ToString()).PadLeft(5, '0');
-                string totalDirectoryString = (directoryLength.ToString()).PadLeft(5, '0');
+                var totalLengthString = (totalLength.ToString()).PadLeft(5, '0');
+                var totalDirectoryString = (directoryLength.ToString()).PadLeft(5, '0');
 
                 if (_leader.Length == 0)
                 {
@@ -142,29 +115,21 @@ namespace USMarcLibrary
 
         #region Public methods to check if a field exists, add a field, etc...
 
-        /// <summary> Gets a flag indicating if a particular field exists </summary>
-        /// <param name="tag">Tag for the MARC field to check</param>
-        /// <returns>TRUE if the field exists, otherwise FALSE</returns>
-        public bool has_Field(int tag)
-        {
-            return _fields.ContainsKey(tag);
-        }
-
         /// <summary> Add a new control field to this record </summary>
         /// <param name="tag">Tag for new control field</param>
         /// <param name="controlFieldValue">Data for the new control field</param>
         /// <returns>New control field object created and added</returns>
-        public MarcField Add_Field(int tag, string controlFieldValue)
+        public MarcField AddField(int tag, string controlFieldValue)
         {
             // Create the new control field
-            MarcField newField = new MarcField(tag, controlFieldValue);
+            var newField = new MarcField(tag, controlFieldValue);
 
             // Either add this to the existing list, or create a new one
             if (_fields.ContainsKey(tag))
                 _fields[tag].Add(newField);
             else
             {
-                List<MarcField> newTagCollection = new List<MarcField> {newField};
+                var newTagCollection = new List<MarcField> {newField};
                 _fields[tag] = newTagCollection;
             }
 
@@ -177,7 +142,7 @@ namespace USMarcLibrary
         /// <param name="indicator1">First indicator for new data field</param>
         /// <param name="indicator2">Second indicator for new data field</param>
         /// <returns>New data field object created and added</returns>
-        public MarcField Add_Field(int tag, char indicator1, char indicator2)
+        public MarcField AddField(int tag, char indicator1, char indicator2)
         {
             // Create the new datafield
             var newField = new MarcField(tag, indicator1, indicator2);
@@ -200,7 +165,7 @@ namespace USMarcLibrary
         /// <param name="indicators">Both indicators</param>
         /// <param name="controlFieldValue">Value for this control field </param>
         /// <returns>New data field object created and added</returns>
-        public MarcField Add_Field(int tag, string indicators, string controlFieldValue)
+        public MarcField AddField(int tag, string indicators, string controlFieldValue)
         {
             // Create the new datafield
             var newField = new MarcField(tag, controlFieldValue) {Indicators = indicators};
@@ -220,7 +185,7 @@ namespace USMarcLibrary
 
         /// <summary> Adds a new field to this record </summary>
         /// <param name="newField"> New field to add </param>
-        public void Add_Field(MarcField newField)
+        public void AddField(MarcField newField)
         {
             if (newField == null)
                 return;
@@ -264,17 +229,17 @@ namespace USMarcLibrary
         /// <summary> Reads the data from a MARC XML file into this record </summary>
         /// <param name="marcXmlFile">Input MARC XML file</param>
         /// <returns>TRUE if successful, otherwise FALSE </returns>
-        public bool Read_From_MARC_XML_File(string marcXmlFile)
+        public bool ReadFromMarcXmlFile(string marcXmlFile)
         {
-            return MarcxmlParser.Read_From_MARC_XML_File(marcXmlFile, this);
+            return MarcXmlParser.Read_From_MARC_XML_File(marcXmlFile, this);
         }
 
         /// <summary> Reads the data from a XML Node Reader </summary>
         /// <param name="nodeReader">XML Node Reader </param>
         /// <returns>TRUE if successful, otherwise FALSE </returns>
-        public bool Read_MARC_Info(XmlTextReader nodeReader)
+        public bool ReadMarcInfo(XmlTextReader nodeReader)
         {
-            return MarcxmlParser.Read_MARC_Info(nodeReader, this);
+            return MarcXmlParser.ReadMarcInfo(nodeReader, this);
         }
 
         #endregion
@@ -288,9 +253,7 @@ namespace USMarcLibrary
         {
             try
             {
-                var str = To_MARC_XML();
-                str = Encoding1252ToKoi8(str);
-
+                var str = ToMarcXml();
                 var writer = new StreamWriter(filename, false);
                 writer.Write(str);
                 writer.Flush();
@@ -315,9 +278,9 @@ namespace USMarcLibrary
 
         /// <summary> Returns this MARC record as MARC XML </summary>
         /// <returns> This record as MARC XML </returns>
-        public string To_MARC_XML()
+        public string ToMarcXml()
         {
-            return MarcXmlWriter.To_MarcXML(this);
+            return Encoding1252ToKoi8(MarcXmlWriter.ToMarcXml(this));
         }
 
         #endregion
@@ -327,7 +290,7 @@ namespace USMarcLibrary
         /// <summary> Saves this MARC record as MARC21 Exchange format record data file </summary>
         /// <param name="filename"> Filename to save this MARC record as  </param>
         /// <returns> TRUE if successful, otherwise FALSE </returns>
-        public bool Save_MARC21(string filename)
+        public bool SaveMarc21(string filename)
         {
             try
             {
@@ -337,7 +300,7 @@ namespace USMarcLibrary
                 var ms = new MemoryStream();
 
                 var writer = new StreamWriter(ms, Encoding.UTF8);
-                writer.Write(To_Machine_Readable_Record());
+                writer.Write(ToMachineReadableRecord());
                 writer.Flush();
 
                 ms.Seek(0, SeekOrigin.Begin);
@@ -358,9 +321,9 @@ namespace USMarcLibrary
 
         /// <summary> Returns a string which represents this record in machine readable record format. </summary>
         /// <returns> This MARC record as MARC21 Exchange format record string</returns>
-        public string To_Machine_Readable_Record()
+        public string ToMachineReadableRecord()
         {
-            return Marc21ExchangeFormatWriter.To_Machine_Readable_Record(this);
+            return ExchangeFormatWriter.ToMachineReadableRecord(this);
         }
 
         #endregion
@@ -423,11 +386,11 @@ namespace USMarcLibrary
 
         /// <summary> Add a new warning which occurred during parsing to this MARC record object </summary>
         /// <param name="warning"> Warning object to add to the list </param>
-        public void Add_Warning(MarcRecordParsingWarning warning)
+        public void AddWarning(ParsingWarning warning)
         {
             // Ensure the list is built
             if (_warnings == null)
-                _warnings = new List<MarcRecordParsingWarning>();
+                _warnings = new List<ParsingWarning>();
 
             // If no other warning of the same type exists, add this
             if (!_warnings.Contains(warning))
@@ -437,14 +400,14 @@ namespace USMarcLibrary
         /// <summary> Add a new warning which occurred during parsing to this MARC record object </summary>
         /// <param name="warningType"> Type of this warning </param>
         /// <param name="warningDetails"> Any additional information about a warning </param>
-        public void Add_Warning(MarcRecordParsingWarningTypeEnum warningType, string warningDetails)
+        public void AddWarning(MarcRecordParsingWarningTypeEnum warningType, string warningDetails)
         {
             // Ensure the list is built
             if (_warnings == null)
-                _warnings = new List<MarcRecordParsingWarning>();
+                _warnings = new List<ParsingWarning>();
 
             // Build this warning object
-            var warning = new MarcRecordParsingWarning(warningType, warningDetails);
+            var warning = new ParsingWarning(warningType, warningDetails);
 
             // If no other warning of the same type exists, add this
             if (!_warnings.Contains(warning))
@@ -453,14 +416,14 @@ namespace USMarcLibrary
 
         /// <summary> Add a new warning which occurred during parsing to this MARC record object </summary>
         /// <param name="warningType"> Type of this warning </param>
-        public void Add_Warning(MarcRecordParsingWarningTypeEnum warningType)
+        public void AddWarning(MarcRecordParsingWarningTypeEnum warningType)
         {
             // Ensure the list is built
             if (_warnings == null)
-                _warnings = new List<MarcRecordParsingWarning>();
+                _warnings = new List<ParsingWarning>();
 
             // Build this warning object
-            var warning = new MarcRecordParsingWarning(warningType);
+            var warning = new ParsingWarning(warningType);
 
             // If no other warning of the same type exists, add this
             if (!_warnings.Contains(warning))
@@ -471,9 +434,9 @@ namespace USMarcLibrary
         public bool HasWarnings => (_warnings != null) && (_warnings.Count != 0);
 
         /// <summary> Returns the list of warnings associated with this MARC record  </summary>
-        public ReadOnlyCollection<MarcRecordParsingWarning> Warnings
+        public ReadOnlyCollection<ParsingWarning> Warnings
         {
-            get { return _warnings == null ? null : new ReadOnlyCollection<MarcRecordParsingWarning>(_warnings); }
+            get { return _warnings == null ? null : new ReadOnlyCollection<ParsingWarning>(_warnings); }
         }
 
         #endregion
@@ -482,11 +445,11 @@ namespace USMarcLibrary
 
         /// <summary> Add a new error which occurred during parsing to this MARC record object </summary>
         /// <param name="error"> Error object to add to the list </param>
-        public void Add_Error(MarcRecordParsingError error)
+        public void AddError(ParsingError error)
         {
             // Ensure the list is built
             if (_errors == null)
-                _errors = new List<MarcRecordParsingError>();
+                _errors = new List<ParsingError>();
 
             // If no other error of the same type exists, add this
             if (!_errors.Contains(error))
@@ -496,14 +459,14 @@ namespace USMarcLibrary
         /// <summary> Add a new error which occurred during parsing to this MARC record object </summary>
         /// <param name="errorType"> Type of this error </param>
         /// <param name="errorDetails"> Any additional information about an error </param>
-        public void Add_Error(MarcRecordParsingErrorTypeEnum errorType, string errorDetails)
+        public void AddError(MarcRecordParsingErrorTypeEnum errorType, string errorDetails)
         {
             // Ensure the list is built
             if (_errors == null)
-                _errors = new List<MarcRecordParsingError>();
+                _errors = new List<ParsingError>();
 
             // Build this Error object
-            var error = new MarcRecordParsingError(errorType, errorDetails);
+            var error = new ParsingError(errorType, errorDetails);
 
             // If no other Error of the same type exists, add this
             if (!_errors.Contains(error))
@@ -512,14 +475,14 @@ namespace USMarcLibrary
 
         /// <summary> Add a new error which occurred during parsing to this MARC record object </summary>
         /// <param name="errorType"> Type of this error </param>
-        public void Add_Error(MarcRecordParsingErrorTypeEnum errorType)
+        public void AddError(MarcRecordParsingErrorTypeEnum errorType)
         {
             // Ensure the list is built
             if (_errors == null)
-                _errors = new List<MarcRecordParsingError>();
+                _errors = new List<ParsingError>();
 
             // Build this error object
-            var error = new MarcRecordParsingError(errorType);
+            var error = new ParsingError(errorType);
 
             // If no other error of the same type exists, add this
             if (!_errors.Contains(error))
@@ -530,9 +493,9 @@ namespace USMarcLibrary
         public bool HasErrors => (_errors != null) && (_errors.Count != 0);
 
         /// <summary> Returns the list of erors associated with this MARC record  </summary>
-        public ReadOnlyCollection<MarcRecordParsingError> Errors
+        public ReadOnlyCollection<ParsingError> Errors
         {
-            get { return _errors == null ? null : new ReadOnlyCollection<MarcRecordParsingError>(_errors); }
+            get { return _errors == null ? null : new ReadOnlyCollection<ParsingError>(_errors); }
         }
 
         #endregion

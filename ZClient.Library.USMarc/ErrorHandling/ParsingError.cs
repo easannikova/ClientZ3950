@@ -1,11 +1,6 @@
-#region Using directives
-
 using System;
-using static System.String;
 
-#endregion
-
-namespace USMarcLibrary.ErrorHandling
+namespace ZClient.Library.USMarc.ErrorHandling
 {
     /// <summary> Enumeration for the basic error types which need to be attached
     /// to a MARC record during parsing (mostly from a MARC21 exchange file)  </summary>
@@ -26,7 +21,7 @@ namespace USMarcLibrary.ErrorHandling
 
     /// <summary> Class stores basic error or error information which may 
     /// occur during processing </summary>
-    public class MarcRecordParsingError : IEquatable<MarcRecordParsingError>
+    public class ParsingError : IEquatable<ParsingError>
     {
         /// <summary> Any additional information about an error </summary>
         /// <remarks> This is different then the generic text for the Error; this is 
@@ -39,7 +34,7 @@ namespace USMarcLibrary.ErrorHandling
         /// <summary> Constructor for a new instance of the MARC_Record_Parsing_Error class </summary>
         /// <param name="errorType"> Type of this error </param>
         /// <param name="errorDetails"> Any additional information about an error </param>
-        public MarcRecordParsingError(MarcRecordParsingErrorTypeEnum errorType, string errorDetails)
+        public ParsingError(MarcRecordParsingErrorTypeEnum errorType, string errorDetails)
         {
             this.ErrorType = errorType;
             this.ErrorDetails = errorDetails;
@@ -47,10 +42,10 @@ namespace USMarcLibrary.ErrorHandling
 
         /// <summary> Constructor for a new instance of the MARC_Record_Parsing_Error class </summary>
         /// <param name="errorType"> Type of this error </param>
-        public MarcRecordParsingError(MarcRecordParsingErrorTypeEnum errorType)
+        public ParsingError(MarcRecordParsingErrorTypeEnum errorType)
         {
             this.ErrorType = errorType;
-            ErrorDetails = Empty;
+            ErrorDetails = string.Empty;
         }
 
         #region IEquatable<MARC_Record_Parsing_Error> Members
@@ -59,7 +54,7 @@ namespace USMarcLibrary.ErrorHandling
         /// Error type </summary>
         /// <param name="other"> Other Error to check for type match </param>
         /// <returns> TRUE if the two Errors are the same type, otherwise FALSE </returns>
-        public bool Equals(MarcRecordParsingError other)
+        public bool Equals(ParsingError other)
         {
             return other != null && ErrorType == other.ErrorType;
         }

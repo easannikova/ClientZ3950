@@ -5,7 +5,17 @@ namespace ZClient.Logic
 {
     public class Connection : IConnection
     {
-        static Connection()
+        private readonly string _host;
+        private readonly int _port;
+        private readonly ConnectionOptionsCollection _options;
+        protected IntPtr ZoomConnection;
+        private bool _disposed;
+        private bool _connected;
+
+        public IConnectionOptionsCollection Options => _options;
+
+
+        protected Connection()
         {
         }
 
@@ -20,15 +30,6 @@ namespace ZClient.Logic
             var errorCode = Yaz.ZOOM_connection_errcode(ZoomConnection);
             CheckErrorCodeAndThrow(errorCode);
         }
-
-        ~Connection()
-        {
-            //Yaz.yaz_log(Yaz.LogLevel.LOG, "Connection Destroyed");
-            Dispose();
-        }
-
-        private readonly string _host;
-        private readonly int _port;
 
         private void CheckErrorCodeAndThrow(int errorCode)
         {
@@ -123,15 +124,6 @@ namespace ZClient.Logic
             return scanSet;
         }
 
-        private readonly ConnectionOptionsCollection _options;
-
-        public IConnectionOptionsCollection Options => _options;
-
-        protected IntPtr ZoomConnection;
-
-        private bool _disposed;
-
-        private bool _connected;
 
         protected void EnsureConnected()
         {
@@ -163,7 +155,7 @@ namespace ZClient.Logic
         {
             get
             {
-                RecordSyntax syntax = (RecordSyntax) Enum.Parse(typeof(RecordSyntax), Options["preferredRecordSyntax"]);
+                var syntax = (RecordSyntax) Enum.Parse(typeof(RecordSyntax), Options["preferredRecordSyntax"]);
                 return syntax;
             }
             set { Options["preferredRecordSyntax"] = Enum.GetName(typeof(RecordSyntax), value); }
