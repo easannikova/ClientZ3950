@@ -13,7 +13,7 @@ namespace ZClient.Logic
             EnsureConnected();
 
             var options = Yaz.ZOOM_options_create();
-            var yazPackage = Yaz.ZOOM_connection_package(ZoomConnection, options);
+            var yazPackage = Yaz.ZOOM_connection_package(ZConnection, options);
             var pack = new Package(yazPackage, this, type);
 
             return pack;

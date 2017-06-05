@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using ZClient.Library.USMarc;
 using ZClient.Library.USMarc.Bib1Attributes;
 using ZClient.Library.USMarc.Models;
@@ -24,14 +25,14 @@ namespace ZClient.Search
         {
         }
 
-        public IDictionary<Server, IEnumerable<MarcRecord>> Search()
+        public async Task<IDictionary<Server, IEnumerable<MarcRecord>>> Search()
         {
             var result = new Dictionary<Server, IEnumerable<MarcRecord>>();
             var manager = new Z3950Manager();
 
             foreach (var server in _servers)
             {
-                var records = manager.GetRecords(server, _bib1Attr, _query);
+                var records = await Task.Factory.StartNew(() => manager.GetRecords(server, _bib1Attr, _query));
                 if (records.Count > 0)
                     result.Add(server, records);
             }

@@ -231,7 +231,7 @@ namespace ZClient.Library.USMarc.Models
         /// <returns>TRUE if successful, otherwise FALSE </returns>
         public bool ReadFromMarcXmlFile(string marcXmlFile)
         {
-            return MarcXmlParser.Read_From_MARC_XML_File(marcXmlFile, this);
+            return MarcXmlParser.ReadFromMarcXmlFile(marcXmlFile, this);
         }
 
         /// <summary> Reads the data from a XML Node Reader </summary>

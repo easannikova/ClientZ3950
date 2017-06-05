@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using ZClient.Abstract;
 using ZClient.CsvResult;
 using ZClient.Library.USMarc.Bib1Attributes;
@@ -28,10 +29,10 @@ namespace ZClient.Manage
                 Servers.AddRange(collection);
         }
 
-        public IDictionary<Server, IEnumerable<string>> Search(string query)
+        public async Task<IDictionary<Server, IEnumerable<string>>> Search(string query)
         {
             var search = new SearchQuery(Servers, Bib1Attr.ISBN, query);
-            var found = search.Search();
+            var found = await search.Search();
             var result = new Dictionary<Server, IEnumerable<string>>();
 
             foreach (var pair in found)

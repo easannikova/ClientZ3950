@@ -64,7 +64,7 @@ namespace ZClient.Library.USMarc.Parsers
             _filename = null;
 
             // Return the first record
-            return parse_next_record();
+            return ParseNextRecord();
         }
 
         /// <summary> Begins parsing a new MarcXML file. </summary>
@@ -80,7 +80,7 @@ namespace ZClient.Library.USMarc.Parsers
             _baseStream = null;
 
             // Return the first record
-            return parse_next_record();
+            return ParseNextRecord();
         }
 
         /// <summary> Returns the next record in the MarcXML_File file or stream </summary>
@@ -88,7 +88,7 @@ namespace ZClient.Library.USMarc.Parsers
         public MarcRecord Next()
         {
             if (_reader != null)
-                return parse_next_record();
+                return ParseNextRecord();
             return null;
         }
 
@@ -115,10 +115,10 @@ namespace ZClient.Library.USMarc.Parsers
         /// <remarks> Whenever the EOF is reached, the stream is closed automatically </remarks>
         public bool EofFlag { get; set; }
 
-        private MarcRecord parse_next_record()
+        private MarcRecord ParseNextRecord()
         {
             // Create the MARC record to return and subfield collection
-            MarcRecord thisRecord = new MarcRecord();
+            var thisRecord = new MarcRecord();
 
             // Try to read this
             ReadMarcInfo(_reader, thisRecord);
@@ -182,7 +182,7 @@ namespace ZClient.Library.USMarc.Parsers
         /// <remarks> Required to implement IEnumerable </remarks>
         public bool MoveNext()
         {
-            Current = parse_next_record();
+            Current = ParseNextRecord();
             if ((Current == null) || (EofFlag))
                 return false;
             return true;
@@ -214,7 +214,7 @@ namespace ZClient.Library.USMarc.Parsers
         /// <param name="marcXmlFile">Input MARC XML file</param>
         /// <param name="record"> Record into which to read the contents of the MarcXML file </param>
         /// <returns>TRUE if successful, otherwise FALSE </returns>
-        public static bool Read_From_MARC_XML_File(string marcXmlFile, MarcRecord record)
+        public static bool ReadFromMarcXmlFile(string marcXmlFile, MarcRecord record)
         {
             try
             {
@@ -246,7 +246,7 @@ namespace ZClient.Library.USMarc.Parsers
             try
             {
                 // Move to the this node
-                move_to_node(nodeReader, "record");
+                MoveToNode(nodeReader, "record");
 
                 // Get the leader information
                 int tag = -1;
@@ -348,7 +348,7 @@ namespace ZClient.Library.USMarc.Parsers
             }
         }
 
-        private static void move_to_node(XmlTextReader nodeReader, string nodeName)
+        private static void MoveToNode(XmlTextReader nodeReader, string nodeName)
         {
             while (nodeReader.Read())
             {

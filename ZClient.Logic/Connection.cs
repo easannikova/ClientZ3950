@@ -8,7 +8,7 @@ namespace ZClient.Logic
         private readonly string _host;
         private readonly int _port;
         private readonly ConnectionOptionsCollection _options;
-        protected IntPtr ZoomConnection;
+        protected IntPtr ZConnection;
         private bool _disposed;
         private bool _connected;
 
@@ -25,9 +25,9 @@ namespace ZClient.Logic
             _port = port;
 
             _options = new ConnectionOptionsCollection();
-            ZoomConnection = Yaz.ZOOM_connection_create(_options.ZoomOptions);
+            ZConnection = Yaz.ZOOM_connection_create(_options.ZoomOptions);
 
-            var errorCode = Yaz.ZOOM_connection_errcode(ZoomConnection);
+            var errorCode = Yaz.ZOOM_connection_errcode(ZConnection);
             CheckErrorCodeAndThrow(errorCode);
         }
 
@@ -62,7 +62,7 @@ namespace ZClient.Logic
                 case Yaz.ZoomErrorInternal:
                 case Yaz.ZoomErrorUnsupportedProtocol:
                 case Yaz.ZoomErrorUnsupportedQuery:
-                    message = Yaz.ZOOM_connection_errmsg(ZoomConnection);
+                    message = Yaz.ZOOM_connection_errmsg(ZConnection);
                     throw new ZoomImplementationException("A fatal error occurred in Yaz: " + errorCode + " - " +
                                                           message);
 
@@ -88,9 +88,9 @@ namespace ZClient.Logic
                 else
                     throw new NotImplementedException();
 
-                var yazResultSet = Yaz.ZOOM_connection_search(ZoomConnection, yazQuery);
+                var yazResultSet = Yaz.ZOOM_connection_search(ZConnection, yazQuery);
                 // error checking C-style
-                var errorCode = Yaz.ZOOM_connection_errcode(ZoomConnection);
+                var errorCode = Yaz.ZOOM_connection_errcode(ZConnection);
 
                 if (errorCode != Yaz.ZoomErrorNone)
                     Yaz.ZOOM_resultset_destroy(yazResultSet);
@@ -111,9 +111,9 @@ namespace ZClient.Logic
         public IScanSet Scan(IPrefixQuery query)
         {
             EnsureConnected();
-            var yazScanSet = Yaz.ZOOM_connection_scan(ZoomConnection, query.QueryString);
+            var yazScanSet = Yaz.ZOOM_connection_scan(ZConnection, query.QueryString);
 
-            var errorCode = Yaz.ZOOM_connection_errcode(ZoomConnection);
+            var errorCode = Yaz.ZOOM_connection_errcode(ZConnection);
             if (errorCode != Yaz.ZoomErrorNone)
             {
                 Yaz.ZOOM_scanset_destroy(yazScanSet);
@@ -133,8 +133,8 @@ namespace ZClient.Logic
 
         public void Connect()
         {
-            Yaz.ZOOM_connection_connect(ZoomConnection, _host, _port);
-            var errorCode = Yaz.ZOOM_connection_errcode(ZoomConnection);
+            Yaz.ZOOM_connection_connect(ZConnection, _host, _port);
+            var errorCode = Yaz.ZOOM_connection_errcode(ZConnection);
             CheckErrorCodeAndThrow(errorCode);
             _connected = true;
         }
@@ -143,10 +143,10 @@ namespace ZClient.Logic
         {
             if (!_disposed)
             {
-                Yaz.ZOOM_connection_destroy(ZoomConnection);
+                Yaz.ZOOM_connection_destroy(ZConnection);
 
                 //Yaz.yaz_log(Yaz.LogLevel.LOG, "Connection Disposed");
-                ZoomConnection = IntPtr.Zero;
+                ZConnection = IntPtr.Zero;
                 _disposed = true;
             }
         }

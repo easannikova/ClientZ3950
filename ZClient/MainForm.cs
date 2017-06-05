@@ -27,11 +27,11 @@ namespace ZClient
             _manager.LoadServers("database.csv");
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private async void button1_Click(object sender, EventArgs e)
         {
             var query = textBox1.Text;
 
-            _result = _manager.Search(query);
+            _result =  await _manager.Search(query);
 
             foreach (var pair in _result)
             {
