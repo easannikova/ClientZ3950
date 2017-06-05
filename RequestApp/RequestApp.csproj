@@ -51,8 +51,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ZClient.Library.USMarc\ZClient.Library.USMarc.csproj">
-      <Project>{E92393B7-C13C-407B-B24F-A6CED0C2F2EA}</Project>
-      <Name>USMarcLibrary</Name>
+      <Project>{e92393b7-c13c-407b-b24f-a6ced0c2f2ea}</Project>
+      <Name>ZClient.Library.USMarc</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

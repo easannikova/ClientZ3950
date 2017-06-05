@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using NLog;
 using ZClient.Library.USMarc.Models;
 
 namespace ZClient.Library.USMarc.Parsers
@@ -14,6 +15,8 @@ namespace ZClient.Library.USMarc.Parsers
     /// To  use the IEnumerable interface, you must pass in the Stream or filename in the constructor.</remarks>
     public class MarcXmlParser : IEnumerable<MarcRecord>, IEnumerator<MarcRecord>
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         // Stream used to read the MarcXML records
         private Stream _baseStream;
         private string _filename;
@@ -103,9 +106,9 @@ namespace ZClient.Library.USMarc.Parsers
                     _reader = null;
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // ignored
+                Logger.Debug(ex);
             }
         }
 
