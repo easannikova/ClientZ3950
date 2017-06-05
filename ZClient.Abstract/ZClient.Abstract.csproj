@@ -113,22 +113,19 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Bib1Diagnostic.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Bib1Exception.cs">
+    <Compile Include="Exception\Bib1Exception.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Config.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ConnectionTimeoutException.cs">
+    <Compile Include="Exception\ConnectionTimeoutException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ConnectionUnavailableException.cs">
+    <Compile Include="Exception\ConnectionUnavailableException.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GenericFactory.cs">
@@ -147,10 +144,10 @@
     <Compile Include="ICQLQuery.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="InitRejectedException.cs">
+    <Compile Include="Exception\InitRejectedException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="InvalidQueryException.cs">
+    <Compile Include="Exception\InvalidQueryException.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="IPackage.cs" />
@@ -177,11 +174,11 @@
     <Compile Include="IScanTerm.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="QueryException.cs" />
+    <Compile Include="Exception\QueryException.cs" />
     <Compile Include="RecordSyntax.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ZoomImplementationException.cs">
+    <Compile Include="Exception\ZoomImplementationException.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

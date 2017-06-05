@@ -1,4 +1,4 @@
-namespace ZClient.Abstract
+namespace ZClient.Abstract.Exception
 {
     /// <summary>
     /// Exception thrown when invalid query has been send to server

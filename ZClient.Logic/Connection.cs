@@ -1,5 +1,6 @@
 using System;
 using ZClient.Abstract;
+using ZClient.Abstract.Exception;
 
 namespace ZClient.Logic
 {
