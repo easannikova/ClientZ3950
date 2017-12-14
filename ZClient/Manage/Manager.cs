@@ -29,9 +29,9 @@ namespace ZClient.Manage
                 Servers.AddRange(collection);
         }
 
-        public async Task<IDictionary<Server, IEnumerable<string>>> Search(string query)
+        public async Task<IDictionary<Server, IEnumerable<string>>> Search(string query, Bib1Attr attr)
         {
-            var search = new SearchQuery(Servers, Bib1Attr.ISBN, query);
+            var search = new SearchQuery(Servers, attr, query);
             var found = await search.Search();
             var result = new Dictionary<Server, IEnumerable<string>>();
 
