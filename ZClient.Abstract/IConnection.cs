@@ -2,6 +2,7 @@ using System;
 
 namespace ZClient.Abstract
 {
+    //комментарий для первого комита
     /// <summary>
     /// The Connection class supports methods for instantiation and
     /// searching of targets, together with the housekeeping and option 
@@ -56,6 +57,8 @@ namespace ZClient.Abstract
         /// </summary>
         string Username { get; set; }
 
+
+        
         /// <summary>
         /// Setting and getting the password option
         /// </summary>
