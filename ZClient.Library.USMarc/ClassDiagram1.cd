@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ZClient.Library.USMarc.Z3950.Server">
+    <Position X="4.75" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAQAAAAQICgAAAAACCAAAAAABAAA=</HashCode>
+      <FileName>Z3950\Server.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ZClient.Logic.Connection">
+    <Position X="2" Y="1" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ZClient.Logic.Record">
+    <Position X="6.75" Y="1.25" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ZClient.Library.USMarc.Writers.MarcXmlWriter">
+    <Position X="1" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIACAAAAAAAAECAAAAAAAAAAAAAAABAACAAIA=</HashCode>
+      <FileName>Writers\MarcXmlWriter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ZClient.Library.USMarc.Parsers.MarcXmlParser">
+    <Position X="3" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgMgAAAAAKgAJBQAAACAAAAAAAAAAIAUoAABAACAAAA=</HashCode>
+      <FileName>Parsers\MarcXmlParser.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ZClient.Library.USMarc.Z3950.Z3950Manager">
+    <Position X="5.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIIAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Z3950\Z3950Manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
